@@ -3,7 +3,8 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MdOutlineRestaurant } from "react-icons/md";
+import { MdOutlineRestaurant, MdEmail, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md";
+import { HiArrowRight } from "react-icons/hi";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -41,84 +43,176 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="flex items-center justify-center gap-2 text-2xl font-bold text-green-800">
-            <MdOutlineRestaurant size={28} />
-            E-Canteen
-          </Link>
-          <p className="mt-2 text-stone-400 text-sm">Buat akun baru</p>
-        </div>
+    <div className="min-h-screen flex bg-stone-50">
+      {/* Left Panel – Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-sm">
+          {/* Mobile logo */}
+          <div className="lg:hidden mb-8 text-center">
+            <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold text-green-800">
+              <MdOutlineRestaurant size={24} />
+              E-Canteen
+            </Link>
+          </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-stone-800">Buat Akun Baru</h1>
+            <p className="mt-1 text-stone-400 text-sm">Daftar dan mulai pesan sekarang</p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm">
+              <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm">
+                <span className="shrink-0">⚠</span>
                 {error}
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Nama Lengkap
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800"
-                placeholder="Nama lengkap"
-              />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-stone-700">Nama Lengkap</label>
+              <div className="relative">
+                <MdPerson size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-xl bg-white focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800 placeholder:text-stone-300 text-sm"
+                  placeholder="Nama lengkap kamu"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800"
-                placeholder="nama@email.com"
-              />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-stone-700">Email</label>
+              <div className="relative">
+                <MdEmail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-xl bg-white focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800 placeholder:text-stone-300 text-sm"
+                  placeholder="nama@email.com"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800"
-                placeholder="Minimal 6 karakter"
-              />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-stone-700">Password</label>
+              <div className="relative">
+                <MdLock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="w-full pl-10 pr-11 py-3 border border-stone-200 rounded-xl bg-white focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800 placeholder:text-stone-300 text-sm"
+                  placeholder="Minimal 6 karakter"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors"
+                >
+                  {showPassword ? <MdVisibilityOff size={18} /> : <MdVisibility size={18} />}
+                </button>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-green-700/25 mt-2"
             >
-              {loading ? "Memproses..." : "Daftar"}
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Memproses...
+                </>
+              ) : (
+                <>
+                  Daftar
+                  <HiArrowRight size={16} />
+                </>
+              )}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-stone-500">
+          <div className="my-6 flex items-center gap-3">
+            <div className="flex-1 h-px bg-stone-200" />
+            <span className="text-xs text-stone-400">atau</span>
+            <div className="flex-1 h-px bg-stone-200" />
+          </div>
+
+          <p className="text-center text-sm text-stone-500">
             Sudah punya akun?{" "}
-            <Link href="/login" className="text-green-700 font-medium hover:underline">
-              Masuk di sini
+            <Link href="/login" className="text-green-700 font-semibold hover:text-green-800 hover:underline underline-offset-2 transition-colors">
+              Masuk sekarang
             </Link>
+          </p>
+        </div>
+      </div>
+
+      {/* Right Panel */}
+      <div className="hidden lg:flex lg:w-1/2 bg-green-800 flex-col justify-between p-12 relative overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-green-700/40" />
+        <div className="absolute top-1/3 -left-16 w-56 h-56 rounded-full bg-green-900/50" />
+        <div className="absolute -bottom-16 right-1/4 w-64 h-64 rounded-full bg-green-700/30" />
+
+        <div className="relative z-10 flex justify-end">
+          <Link href="/" className="flex items-center gap-2 text-white text-xl font-bold">
+            <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+              <MdOutlineRestaurant size={20} className="text-white" />
+            </div>
+            E-Canteen
+          </Link>
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center text-center gap-8">
+          <div className="relative w-52 h-52">
+            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-sm" />
+            <div className="absolute inset-4 rounded-full bg-white/10" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <MdOutlineRestaurant size={80} className="text-white/80" />
+            </div>
+            <div className="absolute -top-3 -left-3 bg-amber-400 text-green-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+              Gratis Daftar
+            </div>
+            <div className="absolute -bottom-3 -right-3 bg-white text-green-800 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+              Mulai Sekarang
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-3xl font-bold text-white leading-tight">
+              Bergabung<br />Bersama Kami
+            </h2>
+            <p className="mt-3 text-green-200 text-sm leading-relaxed max-w-xs">
+              Buat akun gratis dan nikmati kemudahan pesan makanan langsung dari genggamanmu.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2 justify-center">
+            {["🎉 Daftar Gratis", "🍱 Menu Variatif", "📱 Mudah Dipakai"].map((f) => (
+              <span key={f} className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm">
+                {f}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative z-10">
+          <p className="text-green-300 text-xs text-center">
+            © 2026 E-Canteen · All rights reserved
           </p>
         </div>
       </div>
     </div>
   );
 }
+

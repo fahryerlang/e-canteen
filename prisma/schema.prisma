@@ -28,9 +28,10 @@ enum PickupTime {
 
 model User {
   id       Int     @id @default(autoincrement())
+  clerkId  String? @unique
   name     String
   email    String  @unique
-  password String
+  password String?
   role     Role    @default(USER)
   balance  Float   @default(0)
   orders   Order[]
