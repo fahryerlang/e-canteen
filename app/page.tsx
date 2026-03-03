@@ -1,88 +1,557 @@
 "use client";
 
 import Link from "next/link";
-import { FiShoppingBag, FiClock, FiCreditCard } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import {
+  FiArrowRight,
+  FiShoppingBag,
+  FiClock,
+  FiCreditCard,
+  FiCheckCircle,
+  FiStar,
+  FiUsers,
+  FiPlay,
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiInstagram,
+  FiTwitter,
+  FiYoutube,
+} from "react-icons/fi";
+import { MdOutlineRestaurant } from "react-icons/md";
+
+const menuItems = [
+  {
+    name: "Nasi Goreng Spesial",
+    price: 15000,
+    tag: "Best Seller",
+    img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop&q=80",
+  },
+  {
+    name: "Ayam Geprek",
+    price: 18000,
+    tag: "Favorit",
+    img: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop&q=80",
+  },
+  {
+    name: "Mie Goreng",
+    price: 13000,
+    tag: "Populer",
+    img: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&h=300&fit=crop&q=80",
+  },
+  {
+    name: "Es Teh Manis",
+    price: 5000,
+    tag: "Minuman",
+    img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop&q=80",
+  },
+];
+
+function formatRp(n: number) {
+  return "Rp " + n.toLocaleString("id-ID");
+}
 
 export default function HomePage() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-orange-50 to-amber-50">
-      {/* Hero */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex justify-between items-center py-6">
-          <span className="text-2xl font-bold text-orange-600">🍽️ E-Canteen</span>
-          <div className="flex gap-3">
+    <div className="min-h-screen bg-stone-50 text-stone-800 overflow-x-hidden font-sans">
+      {/* ═══ Navbar ═══ */}
+      <nav
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/90 backdrop-blur-lg shadow-xs"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-lg font-bold tracking-tight text-green-800"
+          >
+            <MdOutlineRestaurant size={22} />
+            E-Canteen
+          </Link>
+
+          <div className="hidden md:flex items-center gap-7 text-[13px] font-medium text-stone-500">
+            <a href="#menu" className="hover:text-green-700 transition-colors">
+              Menu
+            </a>
+            <a
+              href="#cara-kerja"
+              className="hover:text-green-700 transition-colors"
+            >
+              Cara Kerja
+            </a>
+            <a
+              href="#tentang"
+              className="hover:text-green-700 transition-colors"
+            >
+              Tentang
+            </a>
+          </div>
+
+          <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="px-4 py-2 text-sm font-medium text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 transition-colors"
+              className="px-4 py-2 text-[13px] font-medium text-stone-600 hover:text-green-700 transition-colors"
             >
               Masuk
             </Link>
             <Link
               href="/register"
-              className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors"
+              className="px-5 py-2 text-[13px] font-semibold text-white bg-green-700 rounded-lg hover:bg-green-800 transition-colors"
             >
               Daftar
             </Link>
           </div>
-        </nav>
+        </div>
+      </nav>
 
-        <div className="py-20 text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-            Pesan Makanan dari Kelas,
-            <br />
-            <span className="text-orange-600">Ambil Saat Istirahat!</span>
-          </h1>
-          <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
-            E-Canteen menghilangkan antrean panjang di kantin sekolah.
-            Pre-order makanan favorit kamu dan ambil tanpa perlu mengantri.
-          </p>
-          <div className="mt-10 flex justify-center gap-4">
+      {/* ═══ Hero ═══ */}
+      <section className="relative pt-28 pb-16 sm:pt-36 sm:pb-24">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Text */}
+            <div>
+              <span className="inline-block bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-md mb-5 tracking-wide">
+                #1 Kantin Digital Sekolah
+              </span>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold leading-[1.13] tracking-tight text-stone-900">
+                Pesan makanan,
+                <br />
+                <span className="text-green-700">tanpa antrean.</span>
+              </h1>
+
+              <p className="mt-5 text-base text-stone-500 leading-relaxed max-w-md">
+                Pilih menu favorit dari kelas, bayar dengan saldo digital, dan
+                ambil saat istirahat. Cepat, mudah, tanpa ribet.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/register"
+                  className="group inline-flex items-center gap-2 px-6 py-3 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-all duration-200"
+                >
+                  Mulai Pesan
+                  <FiArrowRight
+                    size={15}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
+                </Link>
+                <a
+                  href="#cara-kerja"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-stone-600 bg-white border border-stone-200 rounded-lg hover:border-stone-300 transition-colors"
+                >
+                  <FiPlay size={13} />
+                  Lihat Cara Kerja
+                </a>
+              </div>
+
+              {/* Trust strip */}
+              <div className="mt-10 flex items-center gap-6 text-xs text-stone-400">
+                <span className="flex items-center gap-1.5">
+                  <FiUsers size={13} className="text-green-600" />
+                  <strong className="text-stone-600">500+</strong> siswa aktif
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <FiStar
+                    size={13}
+                    className="text-amber-500 fill-amber-500"
+                  />
+                  <strong className="text-stone-600">4.9</strong> rating
+                </span>
+              </div>
+            </div>
+
+            {/* Hero image grid */}
+            <div className="relative">
+              <div className="grid grid-cols-5 grid-rows-4 gap-3 h-80 sm:h-96">
+                {/* Main image */}
+                <div className="col-span-3 row-span-4 rounded-2xl overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&h=700&fit=crop&q=80"
+                    alt="Makanan lezat"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Side images */}
+                <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop&q=80"
+                    alt="Pizza"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop&q=80"
+                    alt="Pancake"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Floating order card */}
+              <div className="absolute -bottom-5 left-4 bg-white rounded-xl shadow-lg shadow-stone-200/60 px-4 py-3 flex items-center gap-3 border border-stone-100">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <FiShoppingBag size={18} className="text-green-700" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-stone-800">2,340+</p>
+                  <p className="text-[10px] text-stone-400">
+                    pesanan bulan ini
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Menu Preview ═══ */}
+      <section id="menu" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-xs font-semibold text-green-700 uppercase tracking-widest mb-1">
+                Menu
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900">
+                Menu Populer
+              </h2>
+            </div>
             <Link
               href="/register"
-              className="px-8 py-3 bg-orange-600 text-white font-semibold rounded-xl hover:bg-orange-700 transition-colors text-lg"
+              className="hidden sm:flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800 transition-colors"
             >
-              Mulai Sekarang
-            </Link>
-            <Link
-              href="/login"
-              className="px-8 py-3 border-2 border-orange-600 text-orange-600 font-semibold rounded-xl hover:bg-orange-50 transition-colors text-lg"
-            >
-              Sudah Punya Akun
+              Lihat Semua <FiArrowRight size={14} />
             </Link>
           </div>
-        </div>
 
-        {/* Features */}
-        <div className="pb-20 grid sm:grid-cols-3 gap-8">
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
-            <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <FiShoppingBag className="text-orange-600" size={28} />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Pilih Menu</h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Lihat daftar menu kantin dan tambahkan ke keranjang dengan mudah.
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
-            <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <FiClock className="text-blue-600" size={28} />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Pilih Waktu</h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Tentukan waktu pengambilan: Istirahat 1 atau Istirahat 2.
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
-            <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <FiCreditCard className="text-green-600" size={28} />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Bayar dengan Saldo</h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Gunakan saldo virtual untuk pembayaran yang cepat dan aman.
-            </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {menuItems.map((item) => (
+              <div
+                key={item.name}
+                className="group bg-stone-50 rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-stone-200/50 hover:-translate-y-1 transition-all duration-300 border border-stone-100"
+              >
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={item.img}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur text-[10px] font-bold text-stone-600 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="p-4">
+                  <h3 className="text-sm font-bold text-stone-800 mb-2">
+                    {item.name}
+                  </h3>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-extrabold text-green-700">
+                      {formatRp(item.price)}
+                    </span>
+                    <Link
+                      href="/register"
+                      className="w-8 h-8 flex items-center justify-center bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
+                    >
+                      <FiShoppingBag size={13} />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ═══ How It Works ═══ */}
+      <section id="cara-kerja" className="py-20 bg-stone-50">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8">
+          <div className="text-center mb-14">
+            <p className="text-xs font-semibold text-green-700 uppercase tracking-widest mb-2">
+              Cara Kerja
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900">
+              Tiga langkah mudah
+            </h2>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[
+              {
+                num: "01",
+                icon: <FiShoppingBag size={22} />,
+                title: "Pilih Menu",
+                desc: "Buka daftar menu kantin dan tambahkan makanan ke keranjang.",
+              },
+              {
+                num: "02",
+                icon: <FiClock size={22} />,
+                title: "Pilih Waktu",
+                desc: "Tentukan pengambilan saat Istirahat 1 atau Istirahat 2.",
+              },
+              {
+                num: "03",
+                icon: <FiCreditCard size={22} />,
+                title: "Bayar & Ambil",
+                desc: "Bayar dengan saldo digital, ambil pesanan tanpa mengantri.",
+              },
+            ].map((item, i) => (
+              <div
+                key={item.num}
+                className="relative bg-white rounded-2xl p-7 border border-stone-100 hover:border-green-200 hover:shadow-md transition-all duration-300"
+              >
+                <span className="text-4xl font-black text-stone-100 absolute top-5 right-6 select-none">
+                  {item.num}
+                </span>
+                <div className="w-11 h-11 bg-green-50 text-green-700 rounded-xl flex items-center justify-center mb-4">
+                  {item.icon}
+                </div>
+                <h3 className="text-sm font-bold text-stone-800 mb-1.5">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-stone-500 leading-relaxed">
+                  {item.desc}
+                </p>
+                {i < 2 && (
+                  <div className="hidden sm:block absolute top-1/2 -right-3 w-6 h-px bg-stone-200" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ About / Features ═══ */}
+      <section id="tentang" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left image */}
+            <div className="rounded-2xl overflow-hidden h-72 sm:h-96">
+              <img
+                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=500&fit=crop&q=80"
+                alt="Siswa memesan makanan"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Right text */}
+            <div>
+              <p className="text-xs font-semibold text-green-700 uppercase tracking-widest mb-2">
+                Kenapa E-Canteen?
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 mb-6">
+                Dirancang untuk
+                <br />
+                kemudahan siswa
+              </h2>
+
+              <div className="space-y-4">
+                {[
+                  {
+                    icon: <FiClock size={18} />,
+                    title: "Hemat Waktu",
+                    desc: "Pesan dari kelas, tidak perlu antrean di kantin.",
+                  },
+                  {
+                    icon: <FiCreditCard size={18} />,
+                    title: "Saldo Digital",
+                    desc: "Bayar tanpa uang tunai, aman dan transparan.",
+                  },
+                  {
+                    icon: <FiCheckCircle size={18} />,
+                    title: "Status Real-time",
+                    desc: "Pantau pesanan dari diproses hingga siap diambil.",
+                  },
+                ].map((f) => (
+                  <div key={f.title} className="flex gap-4 items-start">
+                    <div className="w-10 h-10 shrink-0 bg-green-50 text-green-700 rounded-xl flex items-center justify-center">
+                      {f.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-stone-800 mb-0.5">
+                        {f.title}
+                      </h3>
+                      <p className="text-xs text-stone-500 leading-relaxed">
+                        {f.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ CTA ═══ */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8">
+          <div className="bg-green-800 rounded-2xl px-8 py-12 sm:px-14 sm:py-16 text-center relative overflow-hidden">
+            {/* Subtle decoration */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-72 h-72 bg-white rounded-full -translate-y-1/2 translate-x-1/3" />
+              <div className="absolute bottom-0 left-0 w-56 h-56 bg-white rounded-full translate-y-1/2 -translate-x-1/3" />
+            </div>
+
+            <div className="relative z-10">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+                Siap pesan tanpa antrean?
+              </h2>
+              <p className="text-green-200 text-sm max-w-md mx-auto mb-8">
+                Daftar sekarang dan mulai nikmati kemudahan memesan makanan
+                dari kantin sekolah.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <Link
+                  href="/register"
+                  className="group inline-flex items-center justify-center gap-2 px-7 py-3 bg-white text-green-800 text-sm font-bold rounded-lg hover:bg-green-50 transition-colors"
+                >
+                  Daftar Gratis
+                  <FiArrowRight
+                    size={15}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center px-7 py-3 text-sm font-medium text-white rounded-lg border border-white/25 hover:bg-white/10 transition-colors"
+                >
+                  Masuk
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Footer ═══ */}
+      <footer className="bg-stone-900 text-stone-300 pt-14 pb-6">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8">
+          {/* Top grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-10 border-b border-stone-800">
+            {/* Brand */}
+            <div className="lg:col-span-1">
+              <span className="flex items-center gap-2 text-lg font-bold text-white mb-3">
+                <MdOutlineRestaurant size={20} className="text-green-500" />
+                E-Canteen
+              </span>
+              <p className="text-sm leading-relaxed text-stone-400">
+                Platform kantin digital untuk siswa. Pesan makanan dari kelas, bayar dengan saldo, ambil tanpa antrean.
+              </p>
+              <div className="flex gap-3 mt-5">
+                {[
+                  { icon: <FiInstagram size={16} />, href: "#" },
+                  { icon: <FiTwitter size={16} />, href: "#" },
+                  { icon: <FiYoutube size={16} />, href: "#" },
+                ].map((s, i) => (
+                  <a
+                    key={i}
+                    href={s.href}
+                    className="w-9 h-9 flex items-center justify-center rounded-lg bg-stone-800 text-stone-400 hover:bg-green-700 hover:text-white transition-colors"
+                  >
+                    {s.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-xs font-semibold text-white uppercase tracking-widest mb-4">
+                Menu
+              </h4>
+              <ul className="space-y-2.5 text-sm">
+                {[
+                  { label: "Beranda", href: "/" },
+                  { label: "Daftar Menu", href: "/register" },
+                  { label: "Cara Kerja", href: "#cara-kerja" },
+                  { label: "Tentang Kami", href: "#tentang" },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-stone-400 hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Layanan */}
+            <div>
+              <h4 className="text-xs font-semibold text-white uppercase tracking-widest mb-4">
+                Layanan
+              </h4>
+              <ul className="space-y-2.5 text-sm">
+                {[
+                  "Pesan Makanan",
+                  "Saldo Digital",
+                  "Riwayat Pesanan",
+                  "Top Up Saldo",
+                ].map((item) => (
+                  <li key={item}>
+                    <Link
+                      href="/register"
+                      className="text-stone-400 hover:text-white transition-colors"
+                    >
+                      {item}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Kontak */}
+            <div>
+              <h4 className="text-xs font-semibold text-white uppercase tracking-widest mb-4">
+                Kontak
+              </h4>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2.5">
+                  <FiMapPin size={15} className="text-green-500 mt-0.5 shrink-0" />
+                  <span className="text-stone-400">
+                    Jl. Pendidikan No. 1, Jakarta
+                  </span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <FiPhone size={15} className="text-green-500 shrink-0" />
+                  <span className="text-stone-400">(021) 1234-5678</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <FiMail size={15} className="text-green-500 shrink-0" />
+                  <span className="text-stone-400">info@e-canteen.sch.id</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-6 text-xs text-stone-500">
+            <p>&copy; {new Date().getFullYear()} E-Canteen. Kantin Digital Sekolah.</p>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-stone-300 transition-colors">
+                Kebijakan Privasi
+              </a>
+              <a href="#" className="hover:text-stone-300 transition-colors">
+                Syarat & Ketentuan
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

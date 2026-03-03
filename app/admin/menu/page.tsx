@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { formatRupiah } from "@/lib/utils";
 import { FiPlus, FiEdit, FiTrash2, FiX, FiCheck } from "react-icons/fi";
+import { MdOutlineRestaurant } from "react-icons/md";
 
 interface MenuItem {
   id: number;
@@ -111,7 +112,7 @@ export default function AdminMenuPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-600"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700"></div>
       </div>
     );
   }
@@ -120,8 +121,8 @@ export default function AdminMenuPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Kelola Menu</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-stone-900">Kelola Menu</h1>
+          <p className="text-stone-400 mt-1 text-sm">
             {menus.length} menu terdaftar
           </p>
         </div>
@@ -130,7 +131,7 @@ export default function AdminMenuPage() {
             resetForm();
             setShowForm(true);
           }}
-          className="flex items-center gap-2 bg-orange-600 text-white px-5 py-3 rounded-xl hover:bg-orange-700 transition-colors font-medium"
+          className="flex items-center gap-2 bg-green-700 text-white px-5 py-3 rounded-xl hover:bg-green-800 transition-colors font-medium text-sm"
         >
           <FiPlus size={18} />
           Tambah Menu
@@ -142,12 +143,12 @@ export default function AdminMenuPage() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-gray-900">
+              <h2 className="text-lg font-bold text-stone-900">
                 {editingId ? "Edit Menu" : "Tambah Menu Baru"}
               </h2>
               <button
                 onClick={resetForm}
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-2 text-stone-400 hover:text-stone-600 transition-colors"
               >
                 <FiX size={20} />
               </button>
@@ -161,7 +162,7 @@ export default function AdminMenuPage() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-stone-700 mb-1">
                   Nama Menu
                 </label>
                 <input
@@ -171,13 +172,13 @@ export default function AdminMenuPage() {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-gray-900"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none text-stone-800"
                   placeholder="Contoh: Nasi Goreng"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-stone-700 mb-1">
                   Harga
                 </label>
                 <input
@@ -188,13 +189,13 @@ export default function AdminMenuPage() {
                   }
                   required
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-gray-900"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none text-stone-800"
                   placeholder="Contoh: 15000"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-stone-700 mb-1">
                   URL Foto (opsional)
                 </label>
                 <input
@@ -203,7 +204,7 @@ export default function AdminMenuPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, image: e.target.value })
                   }
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-gray-900"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none text-stone-800"
                   placeholder="https://example.com/foto.jpg"
                 />
               </div>
@@ -216,11 +217,11 @@ export default function AdminMenuPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, available: e.target.checked })
                   }
-                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                  className="w-4 h-4 text-green-700 border-stone-300 rounded focus:ring-green-600"
                 />
                 <label
                   htmlFor="available"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-stone-700"
                 >
                   Tersedia
                 </label>
@@ -228,7 +229,7 @@ export default function AdminMenuPage() {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-orange-600 text-white font-semibold rounded-xl hover:bg-orange-700 transition-colors"
+                className="w-full py-3 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 transition-colors"
               >
                 {editingId ? "Simpan Perubahan" : "Tambah Menu"}
               </button>
@@ -239,36 +240,36 @@ export default function AdminMenuPage() {
 
       {/* Menu List */}
       {menus.length === 0 ? (
-        <div className="text-center py-20 text-gray-500">
+        <div className="text-center py-20 text-stone-400">
           <p className="text-5xl mb-4">📝</p>
           <p className="text-lg">Belum ada menu. Tambahkan menu pertama!</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">
+                <tr className="border-b border-stone-100">
+                  <th className="text-left px-6 py-4 text-sm font-medium text-stone-400">
                     Menu
                   </th>
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">
+                  <th className="text-left px-6 py-4 text-sm font-medium text-stone-400">
                     Harga
                   </th>
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">
+                  <th className="text-left px-6 py-4 text-sm font-medium text-stone-400">
                     Status
                   </th>
-                  <th className="text-right px-6 py-4 text-sm font-medium text-gray-500">
+                  <th className="text-right px-6 py-4 text-sm font-medium text-stone-400">
                     Aksi
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-stone-50">
                 {menus.map((menu) => (
-                  <tr key={menu.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={menu.id} className="hover:bg-stone-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
+                        <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
                           {menu.image ? (
                             <img
                               src={menu.image}
@@ -276,15 +277,15 @@ export default function AdminMenuPage() {
                               className="w-full h-full object-cover rounded-xl"
                             />
                           ) : (
-                            <span className="text-xl">🍽️</span>
+                            <MdOutlineRestaurant className="text-green-300" size={28} />
                           )}
                         </div>
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-stone-800 text-sm">
                           {menu.name}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-orange-600 font-medium">
+                    <td className="px-6 py-4 text-green-700 font-medium text-sm">
                       {formatRupiah(menu.price)}
                     </td>
                     <td className="px-6 py-4">
@@ -313,13 +314,13 @@ export default function AdminMenuPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEdit(menu)}
-                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-2 text-stone-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         >
                           <FiEdit size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(menu.id)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         >
                           <FiTrash2 size={16} />
                         </button>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FiMenu, FiX, FiLogOut, FiHome, FiShoppingCart, FiList, FiDollarSign } from "react-icons/fi";
+import { MdOutlineRestaurant } from "react-icons/md";
 import { formatRupiah } from "@/lib/utils";
 
 interface UserData {
@@ -52,15 +53,16 @@ export default function Navbar() {
   const links = isAdmin ? adminLinks : userLinks;
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-white border-b border-stone-200 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link
             href={isAdmin ? "/admin/dashboard" : "/user/menu"}
-            className="text-xl font-bold text-orange-600"
+            className="flex items-center gap-2 text-lg font-bold tracking-tight text-green-800"
           >
-            🍽️ E-Canteen
+            <MdOutlineRestaurant size={20} className="shrink-0" />
+            E-Canteen
           </Link>
 
           {/* Desktop nav */}
@@ -69,10 +71,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
                   pathname.startsWith(link.href)
-                    ? "bg-orange-100 text-orange-700"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "bg-green-50 text-green-700"
+                    : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
                 }`}
               >
                 {link.icon}
@@ -84,9 +86,9 @@ export default function Navbar() {
           {/* User info & logout (desktop) */}
           <div className="hidden md:flex items-center gap-4">
             <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">{user.name}</p>
+              <p className="text-sm font-medium text-stone-800">{user.name}</p>
               {!isAdmin && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-stone-400">
                   Saldo: {formatRupiah(user.balance)}
                 </p>
               )}
@@ -102,7 +104,7 @@ export default function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 text-gray-600"
+            className="md:hidden p-2 text-stone-600"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -112,11 +114,11 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900">{user.name}</p>
+        <div className="md:hidden border-t border-stone-200 bg-white">
+          <div className="px-4 py-3 border-b border-stone-100">
+            <p className="text-sm font-medium text-stone-800">{user.name}</p>
             {!isAdmin && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-stone-400">
                 Saldo: {formatRupiah(user.balance)}
               </p>
             )}
@@ -129,8 +131,8 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-medium ${
                   pathname.startsWith(link.href)
-                    ? "bg-orange-50 text-orange-700"
-                    : "text-gray-600 hover:bg-gray-50"
+                    ? "bg-green-50 text-green-700"
+                    : "text-stone-600 hover:bg-stone-50"
                 }`}
               >
                 {link.icon}

@@ -28,26 +28,26 @@ export default function AdminReportsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-600"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700"></div>
       </div>
     );
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Laporan Harian</h1>
-      <p className="text-gray-500 mb-8">
+      <h1 className="text-2xl font-bold text-stone-900 mb-2">Laporan Harian</h1>
+      <p className="text-stone-400 mb-8 text-sm">
         Rekapitulasi penjualan hari ini ({report?.date || "-"})
       </p>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl p-6 text-white">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+        <div className="bg-green-800 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center">
               <FiDollarSign size={20} />
             </div>
-            <span className="text-sm font-medium opacity-90">
+            <span className="text-sm font-medium text-green-200">
               Total Pendapatan
             </span>
           </div>
@@ -56,24 +56,24 @@ export default function AdminReportsPage() {
           </p>
         </div>
 
-        <div className="bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white">
+        <div className="bg-stone-800 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center">
               <FiShoppingBag size={20} />
             </div>
-            <span className="text-sm font-medium opacity-90">
+            <span className="text-sm font-medium text-stone-400">
               Total Pesanan
             </span>
           </div>
           <p className="text-3xl font-bold">{report?.totalOrders || 0}</p>
         </div>
 
-        <div className="bg-linear-to-br from-orange-500 to-amber-600 rounded-2xl p-6 text-white">
+        <div className="bg-green-700 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center">
               <FiPackage size={20} />
             </div>
-            <span className="text-sm font-medium opacity-90">
+            <span className="text-sm font-medium text-green-200">
               Total Porsi Terjual
             </span>
           </div>
@@ -84,64 +84,64 @@ export default function AdminReportsPage() {
       </div>
 
       {/* Detail Breakdown */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-900">Detail Per Menu</h2>
+      <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+        <div className="px-6 py-4 border-b border-stone-100">
+          <h2 className="font-semibold text-stone-800 text-sm">Detail Per Menu</h2>
         </div>
         {report?.menuBreakdown && report.menuBreakdown.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
+                <tr className="border-b border-stone-100">
+                  <th className="text-left px-6 py-3 text-sm font-medium text-stone-400">
                     No
                   </th>
-                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
+                  <th className="text-left px-6 py-3 text-sm font-medium text-stone-400">
                     Nama Menu
                   </th>
-                  <th className="text-center px-6 py-3 text-sm font-medium text-gray-500">
+                  <th className="text-center px-6 py-3 text-sm font-medium text-stone-400">
                     Jumlah Terjual
                   </th>
-                  <th className="text-right px-6 py-3 text-sm font-medium text-gray-500">
+                  <th className="text-right px-6 py-3 text-sm font-medium text-stone-400">
                     Pendapatan
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-stone-50">
                 {report.menuBreakdown.map((item, i) => (
-                  <tr key={i} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                  <tr key={i} className="hover:bg-stone-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-stone-400">
                       {i + 1}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-stone-800 text-sm">
                         {item.name}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
+                      <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
                         {item.quantity} porsi
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-medium text-gray-900">
+                    <td className="px-6 py-4 text-right font-medium text-stone-800 text-sm">
                       {formatRupiah(item.revenue)}
                     </td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
-                <tr className="border-t-2 border-gray-200 bg-gray-50">
-                  <td colSpan={2} className="px-6 py-4 font-bold text-gray-900">
+                <tr className="border-t-2 border-stone-200 bg-stone-50">
+                  <td colSpan={2} className="px-6 py-4 font-bold text-stone-800">
                     Total
                   </td>
-                  <td className="px-6 py-4 text-center font-bold text-gray-900">
+                  <td className="px-6 py-4 text-center font-bold text-stone-800">
                     {report.menuBreakdown.reduce(
                       (sum, m) => sum + m.quantity,
                       0
                     )}{" "}
                     porsi
                   </td>
-                  <td className="px-6 py-4 text-right font-bold text-orange-600">
+                  <td className="px-6 py-4 text-right font-bold text-green-700">
                     {formatRupiah(report.totalRevenue)}
                   </td>
                 </tr>
@@ -149,7 +149,7 @@ export default function AdminReportsPage() {
             </table>
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-stone-400">
             <p>Belum ada transaksi hari ini</p>
           </div>
         )}

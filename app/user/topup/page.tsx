@@ -67,16 +67,16 @@ export default function TopUpPage() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Top Up Saldo</h1>
-      <p className="text-gray-500 mb-8">Isi saldo untuk memesan makanan</p>
+      <h1 className="text-2xl font-bold text-stone-900 mb-2">Top Up Saldo</h1>
+      <p className="text-stone-400 mb-8 text-sm">Isi saldo untuk memesan makanan</p>
 
       {/* Current Balance */}
-      <div className="bg-linear-to-r from-orange-500 to-amber-500 rounded-2xl p-6 text-white mb-8">
+      <div className="bg-green-800 rounded-2xl p-6 text-white mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center">
             <FiDollarSign size={20} />
           </div>
-          <span className="text-sm font-medium opacity-90">Saldo Saat Ini</span>
+          <span className="text-sm font-medium text-green-200">Saldo Saat Ini</span>
         </div>
         <p className="text-3xl font-bold">
           {user ? formatRupiah(user.balance) : "..."}
@@ -90,14 +90,14 @@ export default function TopUpPage() {
           </div>
         )}
         {success && (
-          <div className="bg-green-50 text-green-600 px-4 py-3 rounded-lg text-sm mb-4">
+          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg text-sm mb-4">
             {success}
           </div>
         )}
 
         {/* Quick amounts */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-stone-700 mb-3">
             Pilih Nominal
           </label>
           <div className="grid grid-cols-3 gap-3">
@@ -111,8 +111,8 @@ export default function TopUpPage() {
                 }}
                 className={`py-3 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
                   amount === amt
-                    ? "border-orange-600 bg-orange-50 text-orange-700"
-                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                    ? "border-green-700 bg-green-50 text-green-700"
+                    : "border-stone-200 text-stone-600 hover:border-stone-300"
                 }`}
               >
                 {formatRupiah(amt)}
@@ -123,7 +123,7 @@ export default function TopUpPage() {
 
         {/* Custom amount */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-stone-700 mb-1">
             Atau Masukkan Jumlah Lain
           </label>
           <input
@@ -135,14 +135,14 @@ export default function TopUpPage() {
             }}
             placeholder="Contoh: 75000"
             min="1000"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-gray-900"
+            className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading || (!amount && !customAmount)}
-          className="w-full flex items-center justify-center gap-2 py-4 bg-orange-600 text-white font-semibold rounded-2xl hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+          className="w-full flex items-center justify-center gap-2 py-4 bg-green-700 text-white font-semibold rounded-2xl hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
         >
           <FiPlus size={20} />
           {loading

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { FiPackage } from "react-icons/fi";
 import {
   formatRupiah,
   formatDate,
@@ -84,7 +85,7 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-600"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700"></div>
       </div>
     );
   }
@@ -93,8 +94,8 @@ export default function AdminOrdersPage() {
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Antrean Pesanan</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-stone-900">Antrean Pesanan</h1>
+          <p className="text-stone-400 mt-1 text-sm">
             {orders.filter((o) => o.status !== "SELESAI").length} pesanan aktif
           </p>
         </div>
@@ -105,8 +106,8 @@ export default function AdminOrdersPage() {
               onClick={() => setFilter(status)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === status
-                  ? "bg-orange-600 text-white"
-                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  ? "bg-green-700 text-white"
+                  : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
               }`}
             >
               {status === "ALL" ? "Semua" : orderStatusLabel(status)}
@@ -122,10 +123,10 @@ export default function AdminOrdersPage() {
 
         return (
           <div key={time} className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+            <h2 className="text-lg font-semibold text-stone-800 mb-4 flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-green-600"></span>
               {pickupTimeLabel(time)}
-              <span className="text-sm text-gray-400 font-normal">
+              <span className="text-sm text-stone-400 font-normal">
                 ({timeOrders.length} pesanan)
               </span>
             </h2>
@@ -134,13 +135,13 @@ export default function AdminOrdersPage() {
               {timeOrders.map((order) => (
                 <div
                   key={order.id}
-                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
+                  className="bg-white rounded-2xl border border-stone-100 overflow-hidden"
                 >
-                  <div className="p-5 border-b border-gray-50">
+                  <div className="p-5 border-b border-stone-50">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                       <div>
                         <div className="flex items-center gap-3">
-                          <p className="font-semibold text-gray-900">
+                          <p className="font-semibold text-stone-800 text-sm">
                             #{order.id} - {order.user.name}
                           </p>
                           <span
@@ -151,7 +152,7 @@ export default function AdminOrdersPage() {
                             {orderStatusLabel(order.status)}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-stone-400 mt-1">
                           {formatDate(order.createdAt)}
                         </p>
                       </div>
@@ -164,14 +165,14 @@ export default function AdminOrdersPage() {
                             onChange={(e) =>
                               updateStatus(order.id, e.target.value)
                             }
-                            className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2 pr-8 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none cursor-pointer"
+                            className="appearance-none bg-white border border-stone-200 rounded-xl px-4 py-2 pr-8 text-sm font-medium text-stone-700 focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none cursor-pointer"
                           >
                             <option value="DIPROSES">Sedang Disiapkan</option>
                             <option value="SIAP_DIAMBIL">Siap Diambil</option>
                             <option value="SELESAI">Selesai</option>
                           </select>
                           <FiChevronDown
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"
                             size={14}
                           />
                         </div>
@@ -184,17 +185,17 @@ export default function AdminOrdersPage() {
                         key={item.id}
                         className="flex justify-between text-sm py-1.5"
                       >
-                        <span className="text-gray-600">
+                        <span className="text-stone-500">
                           {item.menu.name} x{item.quantity}
                         </span>
-                        <span className="text-gray-900 font-medium">
+                        <span className="text-stone-800 font-medium">
                           {formatRupiah(item.unitPrice * item.quantity)}
                         </span>
                       </div>
                     ))}
-                    <div className="border-t border-gray-100 mt-3 pt-3 flex justify-between">
-                      <span className="font-semibold text-gray-900">Total</span>
-                      <span className="font-bold text-orange-600">
+                    <div className="border-t border-stone-100 mt-3 pt-3 flex justify-between">
+                      <span className="font-semibold text-stone-800">Total</span>
+                      <span className="font-bold text-green-700">
                         {formatRupiah(order.totalPrice)}
                       </span>
                     </div>
@@ -207,8 +208,8 @@ export default function AdminOrdersPage() {
       })}
 
       {filteredOrders.length === 0 && (
-        <div className="text-center py-20 text-gray-500">
-          <p className="text-5xl mb-4">📦</p>
+        <div className="text-center py-20 text-stone-400">
+          <FiPackage className="text-stone-300 mx-auto mb-4" size={64} />
           <p className="text-lg">Tidak ada pesanan</p>
         </div>
       )}
