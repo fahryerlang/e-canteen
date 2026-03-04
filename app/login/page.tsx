@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MdOutlineRestaurant, MdEmail, MdLock, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { HiArrowRight } from "react-icons/hi";
+import { FiAlertTriangle, FiCreditCard, FiGrid, FiZap } from "react-icons/fi";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -90,11 +91,18 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-wrap gap-2 justify-center">
-            {["🍱 Menu Lengkap", "⚡ Order Cepat", "💳 Bayar Mudah"].map((f) => (
-              <span key={f} className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm">
-                {f}
-              </span>
-            ))}
+            <span className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm inline-flex items-center gap-1.5">
+              <FiGrid size={11} />
+              Menu Lengkap
+            </span>
+            <span className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm inline-flex items-center gap-1.5">
+              <FiZap size={11} />
+              Order Cepat
+            </span>
+            <span className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm inline-flex items-center gap-1.5">
+              <FiCreditCard size={11} />
+              Bayar Mudah
+            </span>
           </div>
         </div>
 
@@ -125,7 +133,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm">
-                <span className="shrink-0">⚠</span>
+                <FiAlertTriangle className="shrink-0" size={16} />
                 {error}
               </div>
             )}

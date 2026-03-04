@@ -157,7 +157,10 @@ export default function CartPage() {
                 : "border-stone-200 text-stone-600 hover:border-stone-300"
             }`}
           >
-            🕘 Istirahat 1
+            <span className="inline-flex items-center gap-1.5">
+              <FiClock size={14} />
+              Istirahat 1
+            </span>
           </button>
           <button
             onClick={() => setPickupTime("ISTIRAHAT_2")}
@@ -167,7 +170,10 @@ export default function CartPage() {
                 : "border-stone-200 text-stone-600 hover:border-stone-300"
             }`}
           >
-            🕐 Istirahat 2
+            <span className="inline-flex items-center gap-1.5">
+              <FiClock size={14} />
+              Istirahat 2
+            </span>
           </button>
         </div>
       </div>

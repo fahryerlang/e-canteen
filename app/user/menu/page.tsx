@@ -18,6 +18,7 @@ interface MenuItem {
 export default function UserMenuPage() {
   const [menus, setMenus] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [brokenImageIds, setBrokenImageIds] = useState<number[]>([]);
   const { items, addItem, updateQuantity, totalItems, totalPrice } = useCart();
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function UserMenuPage() {
       .then((res) => res.json())
       .then((data) => {
         setMenus(data);
+        setBrokenImageIds([]);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -80,11 +82,16 @@ export default function UserMenuPage() {
               >
                 {/* Image placeholder */}
                 <div className="h-48 bg-linear-to-br from-green-50 to-stone-100 flex items-center justify-center">
-                  {menu.image ? (
+                  {menu.image && !brokenImageIds.includes(menu.id) ? (
                     <img
                       src={menu.image}
                       alt={menu.name}
                       className="w-full h-full object-cover"
+                      onError={() =>
+                        setBrokenImageIds((prev) =>
+                          prev.includes(menu.id) ? prev : [...prev, menu.id]
+                        )
+                      }
                     />
                   ) : (
                     <MdOutlineRestaurant className="text-green-200" size={64} />

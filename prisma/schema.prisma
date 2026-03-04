@@ -46,7 +46,7 @@ model Menu {
   id        Int      @id @default(autoincrement())
   name      String
   price     Float
-  image     String?
+  image     String?  @db.LongText
   available Boolean  @default(true)
 
   orderItems OrderItem[]

@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log("[SEED] Seeding database...");
 
   // Create Admin user
   const admin = await prisma.user.upsert({
@@ -17,7 +17,7 @@ async function main() {
       balance: 0,
     },
   });
-  console.log(`✅ Admin created: ${admin.name} (${admin.email})`);
+  console.log(`[OK] Admin created: ${admin.name} (${admin.email})`);
 
   // Create sample User
   const user = await prisma.user.upsert({
@@ -31,7 +31,7 @@ async function main() {
       balance: 100000,
     },
   });
-  console.log(`✅ User created: ${user.name} (${user.email})`);
+  console.log(`[OK] User created: ${user.name} (${user.email})`);
 
   // Create sample Menus
   const menus = [
@@ -52,10 +52,10 @@ async function main() {
       create: menu,
     });
   }
-  console.log(`✅ ${menus.length} menu items created`);
+  console.log(`[OK] ${menus.length} menu items created`);
 
-  console.log("\n🎉 Seeding selesai!");
-  console.log("\n📌 Akun Demo:");
+  console.log("\n[DONE] Seeding selesai!");
+  console.log("\n[INFO] Akun Demo:");
   console.log("   Admin  → admin@ecanteen.com / admin123");
   console.log("   Siswa  → siswa@ecanteen.com / siswa123");
 }

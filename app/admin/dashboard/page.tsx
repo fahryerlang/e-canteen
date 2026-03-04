@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { formatRupiah } from "@/lib/utils";
-import { FiDollarSign, FiShoppingBag, FiPackage, FiTrendingUp } from "react-icons/fi";
+import { FiDollarSign, FiShoppingBag, FiPackage, FiTrendingUp, FiArrowUpRight, FiCalendar } from "react-icons/fi";
 import Link from "next/link";
 
 interface Report {
@@ -26,6 +26,13 @@ export default function AdminDashboard() {
       .catch(() => setLoading(false));
   }, []);
 
+  const today = new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -35,105 +42,176 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-stone-900 mb-2">Dashboard Admin</h1>
-      <p className="text-stone-400 mb-8 text-sm">Ringkasan aktivitas kantin hari ini</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="transition-all duration-300 in-[.sidebar-closed]:pl-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
+            <p className="text-stone-400 text-sm mt-1">Ringkasan aktivitas kantin hari ini</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-stone-400 bg-white border border-stone-100 px-3 py-1.5 rounded-lg w-fit">
+            <FiCalendar size={14} />
+            {today}
+          </div>
+        </div>
+      </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-        <div className="bg-white rounded-2xl border border-stone-100 p-6">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-              <FiDollarSign className="text-green-700" size={20} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="group relative bg-white rounded-2xl border border-stone-100 p-6 hover:shadow-lg hover:shadow-green-500/5 hover:border-green-100 transition-all duration-300 overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500" />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-11 h-11 bg-linear-to-br from-green-500 to-green-700 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+                <FiDollarSign className="text-white" size={20} />
+              </div>
+              <span className="text-xs font-medium text-green-600 bg-green-50 px-2.5 py-1 rounded-full">Hari ini</span>
             </div>
-            <span className="text-sm text-stone-400">Pendapatan Hari Ini</span>
+            <p className="text-sm text-stone-400 mb-1">Pendapatan</p>
+            <p className="text-2xl font-bold text-stone-900">
+              {formatRupiah(report?.totalRevenue || 0)}
+            </p>
           </div>
-          <p className="text-2xl font-bold text-stone-900">
-            {formatRupiah(report?.totalRevenue || 0)}
-          </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-stone-100 p-6">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
-              <FiShoppingBag className="text-blue-600" size={20} />
+        <div className="group relative bg-white rounded-2xl border border-stone-100 p-6 hover:shadow-lg hover:shadow-blue-500/5 hover:border-blue-100 transition-all duration-300 overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500" />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-11 h-11 bg-linear-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <FiShoppingBag className="text-white" size={20} />
+              </div>
+              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">Hari ini</span>
             </div>
-            <span className="text-sm text-stone-400">Total Pesanan</span>
+            <p className="text-sm text-stone-400 mb-1">Total Pesanan</p>
+            <p className="text-2xl font-bold text-stone-900">
+              {report?.totalOrders || 0}
+            </p>
           </div>
-          <p className="text-2xl font-bold text-stone-900">
-            {report?.totalOrders || 0}
-          </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-stone-100 p-6">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
-              <FiPackage className="text-amber-600" size={20} />
+        <div className="group relative bg-white rounded-2xl border border-stone-100 p-6 hover:shadow-lg hover:shadow-amber-500/5 hover:border-amber-100 transition-all duration-300 overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500" />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-11 h-11 bg-linear-to-br from-amber-500 to-amber-700 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+                <FiPackage className="text-white" size={20} />
+              </div>
+              <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">Hari ini</span>
             </div>
-            <span className="text-sm text-stone-400">Item Terjual</span>
+            <p className="text-sm text-stone-400 mb-1">Item Terjual</p>
+            <p className="text-2xl font-bold text-stone-900">
+              {report?.menuBreakdown?.reduce((sum, m) => sum + m.quantity, 0) || 0}
+            </p>
           </div>
-          <p className="text-2xl font-bold text-stone-900">
-            {report?.menuBreakdown?.reduce((sum, m) => sum + m.quantity, 0) || 0}
-          </p>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Link
           href="/admin/orders"
-          className="bg-green-700 text-white rounded-2xl p-5 hover:bg-green-800 transition-colors"
+          className="group relative bg-linear-to-br from-green-600 to-green-800 text-white rounded-2xl p-6 hover:shadow-xl hover:shadow-green-700/20 transition-all duration-300 hover:-translate-y-0.5 overflow-hidden"
         >
-          <FiPackage size={24} className="mb-2" />
-          <p className="font-semibold">Antrean Pesanan</p>
-          <p className="text-sm text-green-200">Lihat dan kelola pesanan masuk</p>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+          <div className="relative">
+            <div className="w-10 h-10 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3">
+              <FiPackage size={20} />
+            </div>
+            <p className="font-semibold text-base">Antrean Pesanan</p>
+            <p className="text-sm text-green-200 mt-1">Lihat dan kelola pesanan masuk</p>
+            <FiArrowUpRight size={18} className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
         </Link>
         <Link
           href="/admin/menu"
-          className="bg-stone-800 text-white rounded-2xl p-5 hover:bg-stone-900 transition-colors"
+          className="group relative bg-linear-to-br from-stone-700 to-stone-900 text-white rounded-2xl p-6 hover:shadow-xl hover:shadow-stone-700/20 transition-all duration-300 hover:-translate-y-0.5 overflow-hidden"
         >
-          <FiShoppingBag size={24} className="mb-2" />
-          <p className="font-semibold">Kelola Menu</p>
-          <p className="text-sm text-stone-400">Tambah, edit, atau hapus menu</p>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+          <div className="relative">
+            <div className="w-10 h-10 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3">
+              <FiShoppingBag size={20} />
+            </div>
+            <p className="font-semibold text-base">Kelola Menu</p>
+            <p className="text-sm text-stone-400 mt-1">Tambah, edit, atau hapus menu</p>
+            <FiArrowUpRight size={18} className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
         </Link>
         <Link
           href="/admin/reports"
-          className="bg-green-800 text-white rounded-2xl p-5 hover:bg-green-900 transition-colors"
+          className="group relative bg-linear-to-br from-green-700 to-emerald-900 text-white rounded-2xl p-6 hover:shadow-xl hover:shadow-green-700/20 transition-all duration-300 hover:-translate-y-0.5 overflow-hidden"
         >
-          <FiTrendingUp size={24} className="mb-2" />
-          <p className="font-semibold">Laporan Harian</p>
-          <p className="text-sm text-green-200">Lihat rekapitulasi penjualan</p>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+          <div className="relative">
+            <div className="w-10 h-10 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3">
+              <FiTrendingUp size={20} />
+            </div>
+            <p className="font-semibold text-base">Laporan Harian</p>
+            <p className="text-sm text-green-200 mt-1">Lihat rekapitulasi penjualan</p>
+            <FiArrowUpRight size={18} className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
         </Link>
       </div>
 
       {/* Top Menu Today */}
       {report?.menuBreakdown && report.menuBreakdown.length > 0 && (
-        <div className="bg-white rounded-2xl border border-stone-100 p-6">
-          <h2 className="font-semibold text-stone-800 mb-4 text-sm">
-            Menu Terjual Hari Ini
-          </h2>
-          <div className="space-y-3">
-            {report.menuBreakdown.map((item, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between py-2 border-b border-stone-50 last:border-0"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center text-sm font-bold text-green-700">
+        <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+          <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
+            <div>
+              <h2 className="font-semibold text-stone-800 text-sm">Menu Terlaris Hari Ini</h2>
+              <p className="text-xs text-stone-400 mt-0.5">{report.menuBreakdown.length} item terjual</p>
+            </div>
+            <Link
+              href="/admin/reports"
+              className="text-xs text-green-700 font-medium hover:text-green-800 flex items-center gap-1 hover:underline underline-offset-2"
+            >
+              Lihat detail
+              <FiArrowUpRight size={12} />
+            </Link>
+          </div>
+          <div className="divide-y divide-stone-50">
+            {report.menuBreakdown.map((item, i) => {
+              const maxQty = Math.max(...report.menuBreakdown.map((m) => m.quantity));
+              const pct = maxQty > 0 ? (item.quantity / maxQty) * 100 : 0;
+              return (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 px-6 py-3.5 hover:bg-stone-50/50 transition-colors"
+                >
+                  <span
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${
+                      i === 0
+                        ? "bg-linear-to-br from-amber-400 to-amber-500 text-white shadow-sm shadow-amber-400/30"
+                        : i === 1
+                          ? "bg-stone-200 text-stone-600"
+                          : i === 2
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-stone-100 text-stone-500"
+                    }`}
+                  >
                     {i + 1}
                   </span>
-                  <span className="font-medium text-stone-800">{item.name}</span>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-stone-800">
-                    {item.quantity} porsi
-                  </p>
-                  <p className="text-xs text-stone-400">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-medium text-stone-800 text-sm truncate">{item.name}</span>
+                      <span className="text-sm font-semibold text-stone-700 tabular-nums shrink-0 ml-3">
+                        {item.quantity} porsi
+                      </span>
+                    </div>
+                    <div className="w-full bg-stone-100 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-linear-to-r from-green-500 to-green-600 transition-all duration-700"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-xs text-stone-400 shrink-0 tabular-nums w-24 text-right">
                     {formatRupiah(item.revenue)}
-                  </p>
+                  </span>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

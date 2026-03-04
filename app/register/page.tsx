@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MdOutlineRestaurant, MdEmail, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { HiArrowRight } from "react-icons/hi";
+import { FiAlertTriangle, FiGift, FiGrid, FiSmartphone } from "react-icons/fi";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -63,7 +64,7 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm">
-                <span className="shrink-0">⚠</span>
+                <FiAlertTriangle className="shrink-0" size={16} />
                 {error}
               </div>
             )}
@@ -198,11 +199,18 @@ export default function RegisterPage() {
           </div>
 
           <div className="flex flex-wrap gap-2 justify-center">
-            {["🎉 Daftar Gratis", "🍱 Menu Variatif", "📱 Mudah Dipakai"].map((f) => (
-              <span key={f} className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm">
-                {f}
-              </span>
-            ))}
+            <span className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm inline-flex items-center gap-1.5">
+              <FiGift size={11} />
+              Daftar Gratis
+            </span>
+            <span className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm inline-flex items-center gap-1.5">
+              <FiGrid size={11} />
+              Menu Variatif
+            </span>
+            <span className="px-4 py-1.5 bg-white/15 text-white text-xs font-medium rounded-full backdrop-blur-sm inline-flex items-center gap-1.5">
+              <FiSmartphone size={11} />
+              Mudah Dipakai
+            </span>
           </div>
         </div>
 

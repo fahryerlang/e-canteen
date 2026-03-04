@@ -309,9 +309,9 @@ export default function HomePage() {
             ].map((item, i) => (
               <div
                 key={item.num}
-                className="relative bg-white rounded-2xl p-7 border border-stone-100 hover:border-green-200 hover:shadow-md transition-all duration-300"
+                className="group relative bg-white rounded-2xl p-7 border border-stone-100 hover:border-green-200 hover:shadow-md transition-all duration-300"
               >
-                <span className="text-4xl font-black text-stone-100 absolute top-5 right-6 select-none">
+                <span className="text-4xl font-black text-stone-100 group-hover:text-green-600 absolute top-5 right-6 select-none transition-all duration-300 ease-out opacity-70 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 scale-95 group-hover:scale-100">
                   {item.num}
                 </span>
                 <div className="w-11 h-11 bg-green-50 text-green-700 rounded-xl flex items-center justify-center mb-4">
