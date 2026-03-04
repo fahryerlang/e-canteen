@@ -12,6 +12,7 @@ datasource db {
 
 enum Role {
   ADMIN
+  SELLER
   USER
 }
 
@@ -26,15 +27,35 @@ enum PickupTime {
   ISTIRAHAT_2
 }
 
+model Canteen {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  isActive    Boolean @default(true)
+
+  users User[]
+  menus Menu[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("canteens")
+}
+
 model User {
-  id       Int     @id @default(autoincrement())
-  clerkId  String? @unique
-  name     String
-  email    String  @unique
-  password String?
-  role     Role    @default(USER)
-  balance  Float   @default(0)
-  orders   Order[]
+  id         Int      @id @default(autoincrement())
+  clerkId    String?  @unique
+  name       String
+  email      String   @unique
+  password   String?
+  role       Role     @default(USER)
+  balance    Float    @default(0)
+  canteenId  Int?
+  canteen    Canteen? @relation(fields: [canteenId], references: [id])
+  orders     Order[]
+  reviews    Review[]
+  transactions Transaction[]
+  favorites  Favorite[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -42,14 +63,26 @@ model User {
   @@map("users")
 }
 
+enum MenuCategory {
+  MAKANAN
+  MINUMAN
+  SNACK
+}
+
 model Menu {
-  id        Int      @id @default(autoincrement())
-  name      String
-  price     Float
-  image     String?  @db.LongText
-  available Boolean  @default(true)
+  id          Int           @id @default(autoincrement())
+  name        String
+  price       Float
+  image       String?       @db.LongText
+  description String?
+  category    MenuCategory  @default(MAKANAN)
+  available   Boolean       @default(true)
+  canteenId   Int?
+  canteen     Canteen?      @relation(fields: [canteenId], references: [id])
 
   orderItems OrderItem[]
+  reviews    Review[]
+  favorites  Favorite[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -82,4 +115,60 @@ model OrderItem {
   unitPrice Float
 
   @@map("order_items")
+}
+
+enum TransactionType {
+  TOPUP
+  PAYMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Transaction {
+  id        Int               @id @default(autoincrement())
+  userId    Int
+  user      User              @relation(fields: [userId], references: [id])
+  type      TransactionType
+  amount    Float
+  note      String?
+  orderId   Int?
+  status    TransactionStatus @default(APPROVED)
+
+  createdAt DateTime @default(now())
+
+  @@map("transactions")
+}
+
+model Review {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+  menuId   Int
+  menu     Menu   @relation(fields: [menuId], references: [id])
+  orderId  Int
+  rating   Int
+  comment  String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, menuId, orderId])
+  @@map("reviews")
+}
+
+model Favorite {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+  menuId Int
+  menu   Menu @relation(fields: [menuId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, menuId])
+  @@map("favorites")
 }

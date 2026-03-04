@@ -5,8 +5,9 @@ export interface SessionUser {
   id: number;
   name: string;
   email: string;
-  role: "ADMIN" | "USER";
+  role: "ADMIN" | "SELLER" | "USER";
   balance: number;
+  canteenId?: number | null;
 }
 
 /**
@@ -31,6 +32,7 @@ export async function getSession(): Promise<SessionUser | null> {
         email: true,
         role: true,
         balance: true,
+        canteenId: true,
       },
     });
 
@@ -40,8 +42,9 @@ export async function getSession(): Promise<SessionUser | null> {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role as "ADMIN" | "USER",
+      role: user.role as "ADMIN" | "SELLER" | "USER",
       balance: user.balance,
+      canteenId: user.canteenId,
     };
   } catch {
     return null;

@@ -76,15 +76,17 @@ export default function CartPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Link
-        href="/user/menu"
-        className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-800 mb-6 transition-colors text-sm"
-      >
-        <FiArrowLeft />
-        Kembali ke Menu
-      </Link>
+      <div className="transition-all duration-300 in-[.sidebar-closed]:pl-12">
+        <Link
+          href="/user/menu"
+          className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-800 mb-6 transition-colors text-sm"
+        >
+          <FiArrowLeft />
+          Kembali ke Menu
+        </Link>
 
-      <h1 className="text-2xl font-bold text-stone-900 mb-6">Keranjang Kamu</h1>
+        <h1 className="text-2xl font-bold text-stone-900 mb-6">Keranjang Kamu</h1>
+      </div>
 
       {error && (
         <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm mb-4">

@@ -1,9 +1,14 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { formatRupiah } from "@/lib/utils";
-import { FiPlus, FiEdit, FiTrash2, FiX, FiCheck, FiFileText, FiImage, FiUpload } from "react-icons/fi";
-import { MdOutlineRestaurant } from "react-icons/md";
+import { FiPlus, FiEdit, FiTrash2, FiX, FiCheck, FiFileText, FiImage, FiUpload, FiFilter } from "react-icons/fi";
+import { MdOutlineRestaurant, MdStorefront } from "react-icons/md";
+
+interface CanteenOption {
+  id: number;
+  name: string;
+}
 
 interface MenuItem {
   id: number;
@@ -11,20 +16,25 @@ interface MenuItem {
   price: number;
   image: string | null;
   available: boolean;
+  canteenId: number | null;
+  canteen: { id: number; name: string } | null;
 }
 
 export default function AdminMenuPage() {
   const [menus, setMenus] = useState<MenuItem[]>([]);
+  const [canteens, setCanteens] = useState<CanteenOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [brokenImageIds, setBrokenImageIds] = useState<number[]>([]);
   const [previewImageError, setPreviewImageError] = useState(false);
+  const [filterCanteenId, setFilterCanteenId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
     image: "",
     available: true,
+    canteenId: "",
   });
   const [error, setError] = useState("");
 
@@ -39,12 +49,20 @@ export default function AdminMenuPage() {
       .catch(() => setLoading(false));
   };
 
+  const fetchCanteens = () => {
+    fetch("/api/canteens")
+      .then((res) => res.json())
+      .then((data) => setCanteens(data.map((c: CanteenOption) => ({ id: c.id, name: c.name }))))
+      .catch(() => {});
+  };
+
   useEffect(() => {
     fetchMenus();
+    fetchCanteens();
   }, []);
 
   const resetForm = () => {
-    setFormData({ name: "", price: "", image: "", available: true });
+    setFormData({ name: "", price: "", image: "", available: true, canteenId: "" });
     setEditingId(null);
     setShowForm(false);
     setError("");
@@ -57,6 +75,7 @@ export default function AdminMenuPage() {
       price: menu.price.toString(),
       image: menu.image || "",
       available: menu.available,
+      canteenId: menu.canteenId?.toString() || "",
     });
     setEditingId(menu.id);
     setShowForm(true);
@@ -66,6 +85,11 @@ export default function AdminMenuPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!formData.canteenId) {
+      setError("Kantin wajib dipilih");
+      return;
+    }
 
     const url = editingId ? `/api/menu/${editingId}` : "/api/menu";
     const method = editingId ? "PUT" : "POST";
@@ -134,6 +158,23 @@ export default function AdminMenuPage() {
     }
   };
 
+  const filteredMenus = filterCanteenId
+    ? menus.filter((m) => m.canteenId === filterCanteenId)
+    : menus;
+
+  // Group menus by canteen
+  const groupedMenus: { canteenName: string; canteenId: number | null; items: MenuItem[] }[] = [];
+  const seenGroups = new Map<string, MenuItem[]>();
+  for (const m of filteredMenus) {
+    const key = m.canteen?.name ?? "Tanpa Kantin";
+    const cId = m.canteen?.id ?? null;
+    if (!seenGroups.has(key)) {
+      seenGroups.set(key, []);
+      groupedMenus.push({ canteenName: key, canteenId: cId, items: seenGroups.get(key)! });
+    }
+    seenGroups.get(key)!.push(m);
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -150,6 +191,7 @@ export default function AdminMenuPage() {
           <h1 className="text-2xl font-bold text-stone-900">Kelola Menu</h1>
           <p className="text-stone-400 mt-1 text-sm">
             {menus.length} menu terdaftar
+            {canteens.length > 0 && ` \u00b7 ${canteens.length} kantin`}
           </p>
         </div>
         <button
@@ -164,12 +206,45 @@ export default function AdminMenuPage() {
         </button>
       </div>
 
+      {/* Canteen Filter Tabs */}
+      {canteens.length > 1 && (
+        <div className="flex gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs text-stone-400 mr-1">
+            <FiFilter size={13} />
+            Filter:
+          </div>
+          <button
+            onClick={() => setFilterCanteenId(null)}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              filterCanteenId === null
+                ? "bg-green-700 text-white shadow-sm"
+                : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
+            }`}
+          >
+            Semua Kantin
+          </button>
+          {canteens.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setFilterCanteenId(c.id)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                filterCanteenId === c.id
+                  ? "bg-green-700 text-white shadow-sm"
+                  : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
+              }`}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
             {/* Modal Header */}
-            <div className="bg-linear-to-r from-green-600 to-green-700 px-6 py-4 flex justify-between items-center">
+            <div className="bg-linear-to-r from-green-600 to-green-700 px-6 py-4 flex justify-between items-center shrink-0">
               <h2 className="text-lg font-bold text-white">
                 {editingId ? "Edit Menu" : "Tambah Menu Baru"}
               </h2>
@@ -181,7 +256,7 @@ export default function AdminMenuPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto">
               {error && (
                 <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm border border-red-100 flex items-center gap-2">
                   <FiX size={16} className="shrink-0" />
@@ -189,9 +264,37 @@ export default function AdminMenuPage() {
                 </div>
               )}
 
+              {/* Canteen Selector */}
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                  Nama Menu
+                  Kantin <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <MdStorefront size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+                  <select
+                    value={formData.canteenId}
+                    onChange={(e) => setFormData({ ...formData, canteenId: e.target.value })}
+                    required
+                    className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none text-stone-800 bg-stone-50/50 appearance-none cursor-pointer"
+                  >
+                    <option value="">Pilih Kantin...</option>
+                    {canteens.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                  Nama Menu <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -207,7 +310,7 @@ export default function AdminMenuPage() {
 
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                  Harga
+                  Harga <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm font-medium">Rp</span>
@@ -314,108 +417,144 @@ export default function AdminMenuPage() {
       )}
 
       {/* Menu List */}
-      {menus.length === 0 ? (
+      {filteredMenus.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-stone-100">
           <div className="w-16 h-16 bg-stone-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <FiFileText className="text-stone-300" size={32} />
           </div>
-          <p className="text-lg font-medium text-stone-600">Belum ada menu</p>
-          <p className="text-sm text-stone-400 mt-1">Tambahkan menu pertama untuk mulai berjualan</p>
+          <p className="text-lg font-medium text-stone-600">
+            {filterCanteenId ? "Tidak ada menu di kantin ini" : "Belum ada menu"}
+          </p>
+          <p className="text-sm text-stone-400 mt-1">
+            {filterCanteenId
+              ? "Tambahkan menu untuk kantin ini"
+              : "Tambahkan menu pertama untuk mulai berjualan"}
+          </p>
           <button
-            onClick={() => { resetForm(); setShowForm(true); }}
+            onClick={() => {
+              resetForm();
+              if (filterCanteenId) {
+                setFormData((prev) => ({ ...prev, canteenId: filterCanteenId.toString() }));
+              }
+              setShowForm(true);
+            }}
             className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-800 bg-green-50 hover:bg-green-100 px-4 py-2 rounded-xl transition-colors"
           >
             <FiPlus size={16} />
-            Tambah Menu Pertama
+            Tambah Menu
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {menus.map((menu) => (
-            <div
-              key={menu.id}
-              className={`group bg-white rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-0.5 ${
-                menu.available
-                  ? "border-stone-100 hover:shadow-lg hover:shadow-stone-200/50"
-                  : "border-stone-100 opacity-75"
-              }`}
-            >
-              <div className="h-44 bg-linear-to-br from-stone-50 to-stone-100 flex items-center justify-center relative overflow-hidden">
-                {menu.image && !brokenImageIds.includes(menu.id) ? (
-                  <img
-                    src={menu.image}
-                    alt={menu.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={() =>
-                      setBrokenImageIds((prev) =>
-                        prev.includes(menu.id) ? prev : [...prev, menu.id]
-                      )
-                    }
-                  />
-                ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <MdOutlineRestaurant className="text-stone-200" size={48} />
-                    <span className="text-xs text-stone-300">Tidak ada foto</span>
-                  </div>
-                )}
-                {!menu.available && (
-                  <div className="absolute inset-0 bg-stone-900/40 flex items-center justify-center">
-                    <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">Habis</span>
-                  </div>
-                )}
-                {/* Hover overlay with actions */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
+        <div className="space-y-8">
+          {groupedMenus.map(({ canteenName, items: groupItems }) => (
+            <div key={canteenName}>
+              {/* Canteen group header */}
+              {groupedMenus.length > 1 && (
+                <div className="flex items-center gap-2 mb-4">
+                  <MdStorefront className="text-green-700" size={18} />
+                  <h2 className="text-sm font-semibold text-stone-700">{canteenName}</h2>
+                  <span className="text-xs text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">
+                    {groupItems.length} menu
+                  </span>
+                </div>
+              )}
 
-              <div className="p-5">
-                <div className="flex items-start justify-between gap-3 mb-1">
-                  <h3 className="font-semibold text-stone-900 text-base leading-snug">
-                    {menu.name}
-                  </h3>
-                  <button
-                    onClick={() => toggleAvailability(menu)}
-                    className={`shrink-0 flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium transition-all duration-200 ${
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {groupItems.map((menu) => (
+                  <div
+                    key={menu.id}
+                    className={`group bg-white rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-0.5 ${
                       menu.available
-                        ? "bg-green-50 text-green-700 hover:bg-green-100 ring-1 ring-green-100"
-                        : "bg-red-50 text-red-600 hover:bg-red-100 ring-1 ring-red-100"
+                        ? "border-stone-100 hover:shadow-lg hover:shadow-stone-200/50"
+                        : "border-stone-100 opacity-75"
                     }`}
                   >
-                    {menu.available ? (
-                      <>
-                        <FiCheck size={11} />
-                        Tersedia
-                      </>
-                    ) : (
-                      <>
-                        <FiX size={11} />
-                        Habis
-                      </>
-                    )}
-                  </button>
-                </div>
-                <p className="text-green-700 font-bold text-sm mb-3">
-                  {formatRupiah(menu.price)}
-                </p>
+                    <div className="h-44 bg-linear-to-br from-stone-50 to-stone-100 flex items-center justify-center relative overflow-hidden">
+                      {menu.image && !brokenImageIds.includes(menu.id) ? (
+                        <img
+                          src={menu.image}
+                          alt={menu.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={() =>
+                            setBrokenImageIds((prev) =>
+                              prev.includes(menu.id) ? prev : [...prev, menu.id]
+                            )
+                          }
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center gap-2">
+                          <MdOutlineRestaurant className="text-stone-200" size={48} />
+                          <span className="text-xs text-stone-300">Tidak ada foto</span>
+                        </div>
+                      )}
+                      {!menu.available && (
+                        <div className="absolute inset-0 bg-stone-900/40 flex items-center justify-center">
+                          <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">Habis</span>
+                        </div>
+                      )}
+                      {/* Canteen badge on card */}
+                      {menu.canteen && (
+                        <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-stone-700 text-[10px] font-semibold px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                          <MdStorefront size={11} />
+                          {menu.canteen.name}
+                        </div>
+                      )}
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
 
-                <div className="flex items-center gap-2 pt-3 border-t border-stone-100">
-                  <button
-                    onClick={() => handleEdit(menu)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-stone-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    aria-label="Edit menu"
-                  >
-                    <FiEdit size={14} />
-                    Edit
-                  </button>
-                  <div className="w-px h-5 bg-stone-100" />
-                  <button
-                    onClick={() => handleDelete(menu.id)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    aria-label="Hapus menu"
-                  >
-                    <FiTrash2 size={14} />
-                    Hapus
-                  </button>
-                </div>
+                    <div className="p-5">
+                      <div className="flex items-start justify-between gap-3 mb-1">
+                        <h3 className="font-semibold text-stone-900 text-base leading-snug">
+                          {menu.name}
+                        </h3>
+                        <button
+                          onClick={() => toggleAvailability(menu)}
+                          className={`shrink-0 flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium transition-all duration-200 ${
+                            menu.available
+                              ? "bg-green-50 text-green-700 hover:bg-green-100 ring-1 ring-green-100"
+                              : "bg-red-50 text-red-600 hover:bg-red-100 ring-1 ring-red-100"
+                          }`}
+                        >
+                          {menu.available ? (
+                            <>
+                              <FiCheck size={11} />
+                              Tersedia
+                            </>
+                          ) : (
+                            <>
+                              <FiX size={11} />
+                              Habis
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-green-700 font-bold text-sm mb-3">
+                        {formatRupiah(menu.price)}
+                      </p>
+
+                      <div className="flex items-center gap-2 pt-3 border-t border-stone-100">
+                        <button
+                          onClick={() => handleEdit(menu)}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-stone-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          aria-label="Edit menu"
+                        >
+                          <FiEdit size={14} />
+                          Edit
+                        </button>
+                        <div className="w-px h-5 bg-stone-100" />
+                        <button
+                          onClick={() => handleDelete(menu.id)}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          aria-label="Hapus menu"
+                        >
+                          <FiTrash2 size={14} />
+                          Hapus
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}

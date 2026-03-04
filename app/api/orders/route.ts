@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
-// GET orders - User sees own orders, Admin sees all
+// GET orders - User sees own orders, Admin/Seller sees all / their canteen
 export async function GET() {
   try {
     const session = await getSession();
@@ -10,7 +10,13 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const where = session.role === "ADMIN" ? {} : { userId: session.id };
+    let where = {};
+    if (session.role === "USER") {
+      where = { userId: session.id };
+    } else if (session.role === "SELLER" && session.canteenId) {
+      where = { items: { some: { menu: { canteenId: session.canteenId } } } };
+    }
+    // ADMIN: no filter, sees all
 
     const orders = await prisma.order.findMany({
       where,
@@ -135,6 +141,17 @@ export async function POST(request: NextRequest) {
           items: {
             include: { menu: { select: { name: true } } },
           },
+        },
+      });
+
+      // Record transaction
+      await tx.transaction.create({
+        data: {
+          userId: session.id,
+          type: "PAYMENT",
+          amount: totalPrice,
+          note: `Pesanan #${newOrder.id}`,
+          orderId: newOrder.id,
         },
       });
 

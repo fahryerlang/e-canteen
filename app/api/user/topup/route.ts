@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
-// POST top up balance
+// POST request top up (creates PENDING request for admin approval)
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { amount } = body;
+    const { amount, note } = body;
 
     if (!amount || amount <= 0) {
       return NextResponse.json(
@@ -20,16 +20,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await prisma.user.update({
-      where: { id: session.id },
-      data: { balance: { increment: parseFloat(amount) } },
-      select: { id: true, name: true, balance: true },
+    const transaction = await prisma.transaction.create({
+      data: {
+        userId: session.id,
+        type: "TOPUP",
+        amount: parseFloat(amount),
+        note: note || "Permintaan top up saldo",
+        status: "PENDING",
+      },
     });
 
-    return NextResponse.json(user);
+    return NextResponse.json({
+      id: transaction.id,
+      amount: transaction.amount,
+      status: transaction.status,
+      message: "Permintaan top-up berhasil dikirim. Menunggu persetujuan admin.",
+    });
   } catch {
     return NextResponse.json(
-      { error: "Gagal top up saldo" },
+      { error: "Gagal mengirim permintaan top up" },
       { status: 500 }
     );
   }

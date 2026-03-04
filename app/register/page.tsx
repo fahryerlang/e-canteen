@@ -90,11 +90,13 @@ export default function RegisterPage() {
                 <MdEmail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-xl bg-white focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition-all text-stone-800 placeholder:text-stone-300 text-sm"
-                  placeholder="nama@email.com"
+                  placeholder="email"
                 />
               </div>
             </div>

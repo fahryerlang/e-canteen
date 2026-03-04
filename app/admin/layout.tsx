@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AdminSidebar from "@/app/components/AdminSidebar";
+import OrderNotification from "@/app/components/OrderNotification";
 import { FiMenu } from "react-icons/fi";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -26,6 +27,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <FiMenu size={18} />
           </button>
         )}
+        {/* Notification bell */}
+        <div className="absolute top-8 right-5 sm:right-8 z-30">
+          <OrderNotification role="ADMIN" />
+        </div>
         <div className="w-full transition-all duration-300">
           {children}
         </div>

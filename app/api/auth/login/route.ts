@@ -14,7 +14,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, name: true, email: true, password: true, role: true, balance: true, canteenId: true },
+    });
 
     if (!user || user.password !== password) {
       return NextResponse.json(
@@ -27,7 +30,9 @@ export async function POST(request: NextRequest) {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role as "ADMIN" | "USER",
+      role: user.role as "ADMIN" | "SELLER" | "USER",
+      balance: user.balance,
+      canteenId: user.canteenId,
     };
 
     const response = NextResponse.json({

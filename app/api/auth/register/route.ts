@@ -36,7 +36,9 @@ export async function POST(request: NextRequest) {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role as "ADMIN" | "USER",
+      role: user.role as "ADMIN" | "SELLER" | "USER",
+      balance: user.balance,
+      canteenId: null,
     };
 
     const response = NextResponse.json({
