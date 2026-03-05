@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiClipboard, FiDollarSign, FiHome, FiList, FiLogOut, FiShoppingCart, FiX, FiUsers, FiCreditCard, FiBarChart2, FiMessageSquare, FiHeart, FiUser } from "react-icons/fi";
+import { FiClipboard, FiDollarSign, FiHome, FiList, FiLogOut, FiShoppingCart, FiX, FiUsers, FiCreditCard, FiBarChart2, FiMessageSquare, FiHeart, FiUser, FiSend } from "react-icons/fi";
 import { MdOutlineRestaurant, MdStorefront } from "react-icons/md";
 
 interface UserData {
@@ -28,7 +28,7 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setUser(data))
       .catch(() => setUser(null));
-  }, [pathname]);
+  }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -44,6 +44,7 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
     { href: "/admin/orders", label: "Antrean Pesanan", icon: <FiClipboard /> },
     { href: "/admin/users", label: "Kelola Pengguna", icon: <FiUsers /> },
     { href: "/admin/topup", label: "Permintaan Top Up", icon: <FiCreditCard /> },
+    { href: "/admin/withdrawals", label: "Setoran Penjual", icon: <FiSend /> },
     { href: "/admin/reports", label: "Laporan", icon: <FiDollarSign /> },
   ];
 
@@ -52,11 +53,13 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
     { href: "/seller/menu", label: "Menu Saya", icon: <FiShoppingCart /> },
     { href: "/seller/orders", label: "Pesanan Masuk", icon: <FiList /> },
     { href: "/seller/reports", label: "Laporan", icon: <FiBarChart2 /> },
+    { href: "/seller/withdrawals", label: "Setor Saldo", icon: <FiSend /> },
     { href: "/seller/reviews", label: "Ulasan", icon: <FiMessageSquare /> },
   ];
 
   const userLinks = [
     { href: "/user/menu", label: "Menu", icon: <FiHome /> },
+    { href: "/user/canteens", label: "Kantin", icon: <MdStorefront /> },
     { href: "/user/orders", label: "Pesanan Saya", icon: <FiList /> },
     { href: "/user/favorites", label: "Favorit", icon: <FiHeart /> },
     { href: "/user/topup", label: "Top Up", icon: <FiDollarSign /> },
