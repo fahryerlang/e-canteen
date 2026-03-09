@@ -87,14 +87,6 @@ export default function SellerOrdersPage() {
     ISTIRAHAT_2: filtered.filter((o) => o.pickupTime === "ISTIRAHAT_2"),
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}

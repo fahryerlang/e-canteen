@@ -47,9 +47,7 @@ export default function SellerReviewsPage() {
     <div className="p-4 md:p-8 min-h-screen bg-stone-50 in-[.sidebar-closed]:pl-12">
       <h1 className="text-2xl font-bold text-stone-800 mb-6">Ulasan Pelanggan</h1>
 
-      {loading ? (
-        <div className="text-center py-20 text-stone-400">Memuat ulasan...</div>
-      ) : (
+      {!loading && (
         <>
           {/* Stats Overview */}
           {stats && (

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiClipboard, FiDollarSign, FiHome, FiList, FiLogOut, FiShoppingCart, FiX, FiUsers, FiCreditCard, FiBarChart2, FiMessageSquare, FiHeart, FiUser, FiSend } from "react-icons/fi";
+import { FiClipboard, FiDollarSign, FiHome, FiList, FiLogOut, FiShoppingCart, FiX, FiUsers, FiCreditCard, FiBarChart2, FiMessageSquare, FiHeart, FiUser, FiSend, FiChevronDown } from "react-icons/fi";
 import { MdOutlineRestaurant, MdStorefront } from "react-icons/md";
 
 interface UserData {
@@ -35,20 +35,44 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
     router.push("/");
   };
 
+  const [openMenus, setOpenMenus] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Auto-expand dropdown if current path is inside it
+    if (pathname.startsWith("/admin/users") || pathname.startsWith("/admin/buyers") || pathname.startsWith("/admin/sellers")) {
+      setOpenMenus((prev) => prev.includes("pengguna") ? prev : [...prev, "pengguna"]);
+    }
+  }, [pathname]);
+
+  const toggleMenu = (key: string) => {
+    setOpenMenus((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
+
   const role = user?.role ?? (pathname.startsWith("/admin") ? "ADMIN" : pathname.startsWith("/seller") ? "SELLER" : "USER");
 
-  const adminLinks = [
+  type NavLink = { href: string; label: string; icon: React.ReactNode; children?: { href: string; label: string }[]; key?: string };
+
+  const adminLinks: NavLink[] = [
     { href: "/admin/dashboard", label: "Dashboard", icon: <FiHome /> },
     { href: "/admin/canteens", label: "Kelola Kantin", icon: <MdStorefront /> },
     { href: "/admin/menu", label: "Kelola Menu", icon: <MdOutlineRestaurant /> },
     { href: "/admin/orders", label: "Antrean Pesanan", icon: <FiClipboard /> },
-    { href: "/admin/users", label: "Kelola Pengguna", icon: <FiUsers /> },
+    {
+      href: "#", label: "Kelola Pengguna", icon: <FiUsers />, key: "pengguna",
+      children: [
+        { href: "/admin/users", label: "Semua Pengguna" },
+        { href: "/admin/sellers", label: "Penjual" },
+        { href: "/admin/buyers", label: "Pembeli" },
+      ],
+    },
     { href: "/admin/topup", label: "Permintaan Top Up", icon: <FiCreditCard /> },
     { href: "/admin/withdrawals", label: "Setoran Penjual", icon: <FiSend /> },
     { href: "/admin/reports", label: "Laporan", icon: <FiDollarSign /> },
   ];
 
-  const sellerLinks = [
+  const sellerLinks: NavLink[] = [
     { href: "/seller/dashboard", label: "Dashboard", icon: <FiHome /> },
     { href: "/seller/menu", label: "Menu Saya", icon: <FiShoppingCart /> },
     { href: "/seller/orders", label: "Pesanan Masuk", icon: <FiList /> },
@@ -57,10 +81,11 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
     { href: "/seller/reviews", label: "Ulasan", icon: <FiMessageSquare /> },
   ];
 
-  const userLinks = [
+  const userLinks: NavLink[] = [
     { href: "/user/menu", label: "Menu", icon: <FiHome /> },
     { href: "/user/canteens", label: "Kantin", icon: <MdStorefront /> },
-    { href: "/user/orders", label: "Pesanan Saya", icon: <FiList /> },
+    { href: "/user/cart", label: "Keranjang", icon: <FiShoppingCart /> },
+    { href: "/user/orders", label: "Riwayat", icon: <FiList /> },
     { href: "/user/favorites", label: "Favorit", icon: <FiHeart /> },
     { href: "/user/topup", label: "Top Up", icon: <FiDollarSign /> },
     { href: "/user/profile", label: "Profil", icon: <FiUser /> },
@@ -92,21 +117,64 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
         </button>
       </div>
 
-      <div className="px-4 py-5 space-y-1.5">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              pathname.startsWith(link.href)
-                ? "bg-green-50 text-green-700"
-                : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
-            }`}
-          >
-            {link.icon}
-            {link.label}
-          </Link>
-        ))}
+      <div className="px-4 py-5 space-y-1">
+        {links.map((link) =>
+          link.children ? (
+            <div key={link.key}>
+              <button
+                onClick={() => toggleMenu(link.key!)}
+                className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  link.children.some((c) => pathname.startsWith(c.href))
+                    ? "bg-green-50 text-green-700"
+                    : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  {link.icon}
+                  {link.label}
+                </span>
+                <FiChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${openMenus.includes(link.key!) ? "rotate-180" : ""}`}
+                />
+              </button>
+              <div
+                className={`overflow-hidden transition-all duration-200 ${
+                  openMenus.includes(link.key!) ? "max-h-40 opacity-100 mt-1" : "max-h-0 opacity-0"
+                }`}
+              >
+                <div className="ml-5 pl-4 border-l border-stone-200 space-y-0.5">
+                  {link.children.map((child) => (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className={`block px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
+                        pathname.startsWith(child.href)
+                          ? "text-green-700 bg-green-50"
+                          : "text-stone-400 hover:text-stone-700 hover:bg-stone-50"
+                      }`}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                pathname.startsWith(link.href)
+                  ? "bg-green-50 text-green-700"
+                  : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
+              }`}
+            >
+              {link.icon}
+              {link.label}
+            </Link>
+          )
+        )}
       </div>
 
       <div className="mt-auto p-4 border-t border-stone-100">

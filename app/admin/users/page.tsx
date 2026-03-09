@@ -133,9 +133,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Users Table */}
-      {loading ? (
-        <div className="text-center py-20 text-stone-400">Memuat...</div>
-      ) : users.length === 0 ? (
+      {!loading && users.length === 0 ? (
         <div className="text-center py-20 text-stone-400">Tidak ada pengguna ditemukan</div>
       ) : (
         <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">

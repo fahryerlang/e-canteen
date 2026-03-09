@@ -71,9 +71,7 @@ export default function UserFavoritesPage() {
         <p className="text-stone-400 mt-1 text-sm">Menu favorit Anda untuk pemesanan cepat</p>
       </div>
 
-      {loading ? (
-        <div className="text-center py-20 text-stone-400">Memuat...</div>
-      ) : favorites.length === 0 ? (
+      {!loading && favorites.length === 0 ? (
         <div className="text-center py-20">
           <FiHeart size={48} className="mx-auto text-stone-300 mb-4" />
           <p className="text-stone-500 font-medium">Belum ada menu favorit</p>

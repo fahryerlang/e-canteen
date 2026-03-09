@@ -94,14 +94,6 @@ export default function SellerMenuPage() {
     fetchMenus();
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700" />
-      </div>
-    );
-  }
-
   return (
     <div>
       <div className="flex justify-between items-center mb-8 transition-all duration-300 in-[.sidebar-closed]:pl-12">
@@ -117,7 +109,7 @@ export default function SellerMenuPage() {
         </button>
       </div>
 
-      {menus.length === 0 ? (
+      {!loading && menus.length === 0 ? (
         <div className="text-center py-20 text-stone-400">
           <MdOutlineRestaurant size={56} className="mx-auto mb-4 text-stone-300" />
           <p className="text-lg mb-2">Belum ada menu</p>

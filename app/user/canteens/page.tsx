@@ -69,22 +69,6 @@ export default function UserCanteensPage() {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <div className="h-8 w-48 bg-stone-200 rounded-lg animate-pulse" />
-          <div className="h-4 w-72 bg-stone-100 rounded mt-2 animate-pulse" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-64 bg-stone-100 rounded-2xl animate-pulse" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -99,7 +83,7 @@ export default function UserCanteensPage() {
       </div>
 
       {/* Canteen Grid */}
-      {canteens.length === 0 ? (
+      {!loading && canteens.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-stone-400">
           <MdStorefront size={48} className="mb-3 opacity-40" />
           <p className="text-lg font-medium">Belum ada kantin</p>

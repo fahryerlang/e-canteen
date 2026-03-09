@@ -39,7 +39,8 @@ export default function Navbar() {
 
   const userLinks = [
     { href: "/user/menu", label: "Menu", icon: <FiHome /> },
-    { href: "/user/orders", label: "Pesanan Saya", icon: <FiList /> },
+    { href: "/user/cart", label: "Keranjang", icon: <FiShoppingCart /> },
+    { href: "/user/orders", label: "Riwayat", icon: <FiList /> },
     { href: "/user/topup", label: "Top Up", icon: <FiDollarSign /> },
   ];
 

@@ -175,14 +175,6 @@ export default function AdminMenuPage() {
     seenGroups.get(key)!.push(m);
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}

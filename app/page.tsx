@@ -17,8 +17,16 @@ import {
   FiInstagram,
   FiTwitter,
   FiYoutube,
+  FiMenu,
+  FiX,
 } from "react-icons/fi";
 import { MdOutlineRestaurant } from "react-icons/md";
+
+const navLinks = [
+  { href: "#menu", label: "Menu" },
+  { href: "#cara-kerja", label: "Cara Kerja" },
+  { href: "#tentang", label: "Tentang" },
+];
 
 const menuItems = [
   {
@@ -53,6 +61,7 @@ function formatRp(n: number) {
 
 export default function HomePage() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 30);
@@ -60,62 +69,125 @@ export default function HomePage() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
+  useEffect(() => {
+    const closeMenu = () => setMobileMenuOpen(false);
+    window.addEventListener("resize", closeMenu);
+    return () => window.removeEventListener("resize", closeMenu);
+  }, []);
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 overflow-x-hidden font-sans">
       {/* ═══ Navbar ═══ */}
       <nav
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        className={`fixed inset-x-0 z-50 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           scrolled
-            ? "bg-white/90 backdrop-blur-lg shadow-xs"
-            : "bg-transparent"
+            ? "top-4 px-4 sm:px-6"
+            : "top-0 px-0"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-lg font-bold tracking-tight text-green-800"
+        <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "max-w-6xl" : "max-w-full"}`}>
+          <div
+            className={`relative border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              scrolled
+                ? "rounded-[28px] border-white/70 bg-white shadow-xl shadow-stone-900/8 backdrop-blur-xl"
+                : "rounded-none border-transparent bg-white/90 shadow-none backdrop-blur-lg"
+            }`}
           >
-            <MdOutlineRestaurant size={22} />
-            E-Canteen
-          </Link>
+            <div className="relative flex items-center justify-between gap-3 px-3 py-3 sm:px-4 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
+              <Link
+                href="/"
+                className="flex items-center gap-3 rounded-full px-3 py-2 text-stone-900 transition-colors hover:bg-white/70"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-green-700 text-white shadow-sm shadow-green-900/20">
+                  <MdOutlineRestaurant size={20} />
+                </span>
+                <span className="hidden sm:block">
+                  <span className="block text-[11px] uppercase tracking-[0.24em] text-stone-400">
+                    Smart Canteen
+                  </span>
+                  <span className="block text-sm font-bold tracking-tight text-green-900">
+                    E-Canteen
+                  </span>
+                </span>
+              </Link>
 
-          <div className="hidden md:flex items-center gap-7 text-[13px] font-medium text-stone-500">
-            <a href="#menu" className="hover:text-green-700 transition-colors">
-              Menu
-            </a>
-            <a
-              href="#cara-kerja"
-              className="hover:text-green-700 transition-colors"
-            >
-              Cara Kerja
-            </a>
-            <a
-              href="#tentang"
-              className="hover:text-green-700 transition-colors"
-            >
-              Tentang
-            </a>
+              <div className={`hidden md:flex items-center p-1.5 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "rounded-full border border-stone-200/80 bg-stone-100/70 shadow-inner shadow-white/80" : "rounded-full border border-transparent bg-stone-100/50"}`}>
+                {navLinks.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="group relative rounded-full px-4 py-2.5 text-[13px] font-medium text-stone-500 transition-colors duration-200 hover:text-green-900"
+                  >
+                    <span className="absolute inset-0 rounded-full bg-white opacity-0 scale-95 shadow-sm transition-all duration-200 group-hover:opacity-100 group-hover:scale-100" />
+                    <span className="absolute inset-x-4 bottom-1.5 h-px origin-left scale-x-0 bg-green-700 transition-transform duration-200 group-hover:scale-x-100" />
+                    <span className="relative">{item.label}</span>
+                  </a>
+                ))}
+              </div>
+
+              <div className="hidden md:flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="px-4 py-2.5 text-[13px] font-medium text-stone-600 hover:text-green-700 transition-colors"
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-full bg-green-700 px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm shadow-green-900/20 transition-all duration-200 hover:bg-green-800 hover:-translate-y-0.5"
+                >
+                  Daftar
+                </Link>
+              </div>
+
+              <div className="flex items-center gap-2 md:hidden">
+                <Link
+                  href="/login"
+                  className="rounded-full border border-stone-200 bg-white/80 px-4 py-2 text-[13px] font-medium text-stone-600"
+                >
+                  Masuk
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen((prev) => !prev)}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-200 bg-white/80 text-stone-700 shadow-sm"
+                  aria-label="Buka menu navigasi"
+                  aria-expanded={mobileMenuOpen}
+                >
+                  {mobileMenuOpen ? <FiX size={18} /> : <FiMenu size={18} />}
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Link
-              href="/login"
-              className="px-4 py-2 text-[13px] font-medium text-stone-600 hover:text-green-700 transition-colors"
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/register"
-              className="px-5 py-2 text-[13px] font-semibold text-white bg-green-700 rounded-lg hover:bg-green-800 transition-colors"
-            >
-              Daftar
-            </Link>
-          </div>
+          {mobileMenuOpen && (
+            <div className="mt-3 rounded-4xl border border-white/70 bg-white/92 p-3 shadow-xl shadow-stone-900/8 backdrop-blur-xl md:hidden">
+              <div className="space-y-1 rounded-4xl bg-stone-50/80 p-2">
+                {navLinks.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium text-stone-600 transition-colors hover:bg-white hover:text-green-800"
+                  >
+                    <span>{item.label}</span>
+                    <FiArrowRight size={14} className="text-stone-400" />
+                  </a>
+                ))}
+              </div>
+              <Link
+                href="/register"
+                className="mt-3 flex items-center justify-center rounded-2xl bg-green-700 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-green-900/20"
+              >
+                Daftar Sekarang
+              </Link>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* ═══ Hero ═══ */}
-      <section className="relative pt-28 pb-16 sm:pt-36 sm:pb-24">
+      <section className="relative pt-32 pb-16 sm:pt-40 sm:pb-24">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Text */}

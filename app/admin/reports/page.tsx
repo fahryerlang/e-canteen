@@ -190,7 +190,7 @@ export default function AdminReportsPage() {
             onClick={fetchReport}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
           >
-            <FiRefreshCw size={14} className={loading ? "animate-spin" : ""} />
+            <FiRefreshCw size={14} className={report && loading ? "animate-spin" : ""} />
             Refresh
           </button>
         </div>
@@ -237,11 +237,7 @@ export default function AdminReportsPage() {
         )}
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700" />
-        </div>
-      ) : (
+      {!loading && report ? (
         <>
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -364,6 +360,8 @@ export default function AdminReportsPage() {
             )}
           </div>
         </>
+      ) : !loading ? (
+        <div className="text-center py-20 text-stone-400">Gagal memuat laporan</div>
       )}
     </div>
   );

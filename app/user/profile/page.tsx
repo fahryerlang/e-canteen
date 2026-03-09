@@ -101,8 +101,6 @@ export default function UserProfilePage() {
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
 
-  if (loading) return <div className="text-center py-20 text-stone-400 in-[.sidebar-closed]:pl-12">Memuat...</div>;
-
   return (
     <div className="space-y-6">
       <div className="transition-all duration-300 in-[.sidebar-closed]:pl-12">

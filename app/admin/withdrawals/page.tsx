@@ -66,20 +66,6 @@ export default function AdminWithdrawalsPage() {
 
   const pendingCount = withdrawals.filter((w) => w.status === "PENDING").length;
 
-  if (loading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-8 w-56 bg-stone-200 rounded-lg" />
-        <div className="h-12 w-full bg-stone-100 rounded-xl" />
-        <div className="space-y-3">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-20 bg-stone-100 rounded-2xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -120,7 +106,7 @@ export default function AdminWithdrawalsPage() {
 
       {/* List */}
       <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
-        {withdrawals.length === 0 ? (
+        {!loading && withdrawals.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-stone-400">
             <FiSend size={36} className="mb-3 opacity-40" />
             <p className="text-sm font-medium">Tidak ada permintaan setoran</p>

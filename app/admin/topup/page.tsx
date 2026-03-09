@@ -100,9 +100,7 @@ export default function AdminTopUpPage() {
       </div>
 
       {/* Requests List */}
-      {loading ? (
-        <div className="text-center py-20 text-stone-400">Memuat...</div>
-      ) : requests.length === 0 ? (
+      {!loading && requests.length === 0 ? (
         <div className="text-center py-20">
           <FiCheckCircle size={48} className="mx-auto text-stone-300 mb-3" />
           <p className="text-stone-400">Tidak ada permintaan top-up</p>

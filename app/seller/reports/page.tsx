@@ -129,11 +129,9 @@ export default function SellerReportsPage() {
         </div>
       )}
 
-      {loading ? (
-        <div className="text-center py-20 text-stone-400">Memuat laporan...</div>
-      ) : !data ? (
+      {!loading && !data ? (
         <div className="text-center py-20 text-stone-400">Gagal memuat data</div>
-      ) : (
+      ) : !loading && data ? (
         <>
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">

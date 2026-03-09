@@ -106,14 +106,6 @@ export default function UserMenuPage() {
     return g;
   }, [filtered]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700"></div>
-      </div>
-    );
-  }
-
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -201,7 +193,7 @@ export default function UserMenuPage() {
         </div>
       )}
 
-      {filtered.length === 0 ? (
+      {!loading && filtered.length === 0 ? (
         <div className="text-center py-20 text-stone-400">
           <MdOutlineRestaurant size={48} className="mx-auto mb-3 text-stone-300" />
           <p className="text-lg font-medium text-stone-500">{searchQuery ? "Menu tidak ditemukan" : "Belum ada menu tersedia"}</p>

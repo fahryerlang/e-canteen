@@ -89,14 +89,6 @@ export default function AdminCanteensPage() {
     fetchCanteens();
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-700" />
-      </div>
-    );
-  }
-
   return (
     <div>
       {/* Header */}
@@ -113,7 +105,7 @@ export default function AdminCanteensPage() {
         </button>
       </div>
 
-      {canteens.length === 0 ? (
+      {!loading && canteens.length === 0 ? (
         <div className="text-center py-20 text-stone-400">
           <MdOutlineRestaurant size={56} className="mx-auto mb-4 text-stone-300" />
           <p className="text-lg mb-2">Belum ada kantin</p>
