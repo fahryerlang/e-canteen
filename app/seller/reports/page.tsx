@@ -221,7 +221,7 @@ export default function SellerReportsPage() {
             )}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   );
 }

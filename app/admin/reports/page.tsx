@@ -362,7 +362,7 @@ export default function AdminReportsPage() {
         </>
       ) : !loading ? (
         <div className="text-center py-20 text-stone-400">Gagal memuat laporan</div>
-      )}
+      ) : null}
     </div>
   );
 }

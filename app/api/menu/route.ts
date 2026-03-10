@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, price, image, available, canteenId } = body;
+    const { name, price, image, available, canteenId, category, description } = body;
 
     if (!name || price === undefined) {
       return NextResponse.json(
@@ -73,6 +73,8 @@ export async function POST(request: NextRequest) {
         image: image || null,
         available: available !== undefined ? available : true,
         canteenId: parseInt(canteenId),
+        category: category || "MAKANAN",
+        description: description || null,
       },
     });
 

@@ -50,6 +50,8 @@ export default function AdminWithdrawalsPage() {
 
       if (res.ok) {
         fetchData(filter || undefined);
+        // Trigger immediate badge refresh
+        window.dispatchEvent(new CustomEvent("badge-refresh"));
       }
     } catch {
       // ignore

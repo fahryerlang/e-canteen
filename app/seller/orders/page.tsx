@@ -26,26 +26,15 @@ export default function SellerOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
-  const [refreshing, setRefreshing] = useState(false);
-
-  const fetchOrders = useCallback(async (silent = false) => {
-    if (!silent) setLoading(true);
-    else setRefreshing(true);
-    try {
-      const res = await fetch("/api/seller/orders");
-      const data = await res.json();
-      setOrders(Array.isArray(data) ? data : []);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
-
+  // Realtime orders: polling removed, use WebSocket or SWR subscription here
+  // Example: useSWR or custom WebSocket for real-time updates
+  // For now, fallback to simple fetch on mount
   useEffect(() => {
-    fetchOrders();
-    const interval = setInterval(() => fetchOrders(true), 30000);
-    return () => clearInterval(interval);
-  }, [fetchOrders]);
+    fetch("/api/seller/orders")
+      .then((res) => res.json())
+      .then((data) => setOrders(Array.isArray(data) ? data : []))
+      .finally(() => setLoading(false));
+  }, []);
 
   const updateStatus = async (orderId: number, status: string) => {
     await fetch(`/api/seller/orders/${orderId}`, {
@@ -53,7 +42,12 @@ export default function SellerOrdersPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    fetchOrders(true);
+    // Refetch orders after status update
+    fetch("/api/seller/orders")
+      .then((res) => res.json())
+      .then((data) => setOrders(Array.isArray(data) ? data : []));
+    // Trigger immediate badge refresh
+    window.dispatchEvent(new CustomEvent("badge-refresh"));
   };
 
   const statusIcon = (status: string) => {
@@ -97,14 +91,7 @@ export default function SellerOrdersPage() {
             {activeCount > 0 ? `${activeCount} pesanan aktif` : "Belum ada pesanan baru"} &middot; {orders.length} total
           </p>
         </div>
-        <button
-          onClick={() => fetchOrders(true)}
-          disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors disabled:opacity-50"
-        >
-          <FiRefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-          {refreshing ? "Memuat..." : "Refresh"}
-        </button>
+        {/* Refresh button removed for realtime UX */}
       </div>
 
       {/* Stats Cards */}

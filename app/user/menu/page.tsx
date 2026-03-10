@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useCart } from "@/app/components/CartContext";
 import { formatRupiah } from "@/lib/utils";
 import { FiPlus, FiMinus, FiShoppingCart, FiCheck, FiSearch, FiX, FiHeart } from "react-icons/fi";
-import { MdOutlineRestaurant, MdFastfood, MdLocalCafe, MdBakeryDining } from "react-icons/md";
+import { MdOutlineRestaurant } from "react-icons/md";
 import { FiStar } from "react-icons/fi";
 import Link from "next/link";
 
@@ -21,12 +21,11 @@ interface MenuItem {
   canteen: { id: number; name: string } | null;
 }
 
-const CATEGORIES = [
-  { value: "ALL", label: "Semua", icon: MdOutlineRestaurant },
-  { value: "MAKANAN", label: "Makanan", icon: MdFastfood },
-  { value: "MINUMAN", label: "Minuman", icon: MdLocalCafe },
-  { value: "SNACK", label: "Snack", icon: MdBakeryDining },
-];
+interface CategoryOption {
+  id: number;
+  name: string;
+  slug: string;
+}
 
 export default function UserMenuPage() {
   const [menus, setMenus] = useState<MenuItem[]>([]);
@@ -36,6 +35,7 @@ export default function UserMenuPage() {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const { items, addItem, updateQuantity, totalItems, totalPrice } = useCart();
 
   useEffect(() => {
@@ -53,6 +53,11 @@ export default function UserMenuPage() {
       .then((data) => {
         if (Array.isArray(data)) setFavoriteIds(new Set(data.map((f: { menuId: number }) => f.menuId)));
       })
+      .catch(() => {});
+
+    fetch("/api/admin/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
       .catch(() => {});
   }, []);
 
@@ -143,19 +148,22 @@ export default function UserMenuPage() {
 
       {/* Category Filter */}
       <div className="flex gap-2 flex-wrap mb-4">
-        {CATEGORIES.map((cat) => {
-          const Icon = cat.icon;
-          return (
-            <button
-              key={cat.value}
-              onClick={() => setActiveCategory(cat.value)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeCategory === cat.value ? "bg-green-700 text-white" : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"}`}
-            >
-              <Icon size={16} />
-              {cat.label}
-            </button>
-          );
-        })}
+        <button
+          onClick={() => setActiveCategory("ALL")}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeCategory === "ALL" ? "bg-green-700 text-white" : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"}`}
+        >
+          <MdOutlineRestaurant size={16} />
+          Semua
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat.slug}
+            onClick={() => setActiveCategory(cat.slug)}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeCategory === cat.slug ? "bg-green-700 text-white" : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"}`}
+          >
+            {cat.name}
+          </button>
+        ))}
       </div>
 
       {/* Canteen filter tabs */}
@@ -185,7 +193,7 @@ export default function UserMenuPage() {
           <span className="text-xs text-stone-500">
             Menampilkan <span className="font-semibold text-stone-700">{filtered.length}</span> menu
             {searchQuery && <> untuk &ldquo;<span className="font-semibold text-stone-700">{searchQuery}</span>&rdquo;</>}
-            {activeCategory !== "ALL" && <> di kategori <span className="font-semibold text-stone-700">{CATEGORIES.find((c) => c.value === activeCategory)?.label}</span></>}
+            {activeCategory !== "ALL" && <> di kategori <span className="font-semibold text-stone-700">{categories.find((c) => c.slug === activeCategory)?.name}</span></>}
           </span>
           <button onClick={() => { setSearchQuery(""); setActiveCategory("ALL"); }} className="text-xs text-green-700 font-medium hover:underline">
             Reset Filter
@@ -238,7 +246,7 @@ export default function UserMenuPage() {
                         )}
                         {/* Category badge */}
                         <span className="absolute top-3 left-3 text-[10px] font-semibold bg-white/90 backdrop-blur-sm text-stone-600 px-2 py-1 rounded-full">
-                          {CATEGORIES.find((c) => c.value === menu.category)?.label ?? menu.category}
+                          {categories.find((c) => c.slug === menu.category)?.name ?? menu.category}
                         </span>
                         {/* Favorite button */}
                         <button

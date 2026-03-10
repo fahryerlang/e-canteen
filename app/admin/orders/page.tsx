@@ -59,7 +59,11 @@ export default function AdminOrdersPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (res.ok) fetchOrders();
+      if (res.ok) {
+        fetchOrders();
+        // Trigger immediate badge refresh
+        window.dispatchEvent(new CustomEvent("badge-refresh"));
+      }
     } catch {
       alert("Gagal mengupdate status");
     }

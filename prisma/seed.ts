@@ -32,6 +32,24 @@ async function main() {
   });
   console.log(`[OK] Canteens created: ${kantin1.name}, ${kantin2.name}`);
 
+  // ── Categories ────────────────────────────────────────────────────────────
+  const catMakanan = await prisma.category.upsert({
+    where: { slug: "MAKANAN" },
+    update: {},
+    create: { name: "Makanan", slug: "MAKANAN" },
+  });
+  const catMinuman = await prisma.category.upsert({
+    where: { slug: "MINUMAN" },
+    update: {},
+    create: { name: "Minuman", slug: "MINUMAN" },
+  });
+  const catSnack = await prisma.category.upsert({
+    where: { slug: "SNACK" },
+    update: {},
+    create: { name: "Snack", slug: "SNACK" },
+  });
+  console.log(`[OK] Categories created: ${catMakanan.name}, ${catMinuman.name}, ${catSnack.name}`);
+
   // ── Sellers ───────────────────────────────────────────────────────────────
   const seller1 = await prisma.user.upsert({
     where: { email: "kantin1@ecanteen.com" },

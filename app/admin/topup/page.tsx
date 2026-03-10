@@ -35,7 +35,11 @@ export default function AdminTopUpPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action }),
     });
-    if (res.ok) fetchRequests();
+    if (res.ok) {
+      fetchRequests();
+      // Trigger immediate badge refresh
+      window.dispatchEvent(new CustomEvent("badge-refresh"));
+    }
     setProcessing(null);
   };
 

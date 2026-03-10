@@ -42,6 +42,17 @@ model Canteen {
   @@map("canteens")
 }
 
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+  slug String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
+}
+
 model User {
   id         Int      @id @default(autoincrement())
   clerkId    String?  @unique
@@ -64,19 +75,13 @@ model User {
   @@map("users")
 }
 
-enum MenuCategory {
-  MAKANAN
-  MINUMAN
-  SNACK
-}
-
 model Menu {
   id          Int           @id @default(autoincrement())
   name        String
   price       Float
   image       String?       @db.LongText
   description String?
-  category    MenuCategory  @default(MAKANAN)
+  category    String        @default("MAKANAN")
   available   Boolean       @default(true)
   canteenId   Int?
   canteen     Canteen?      @relation(fields: [canteenId], references: [id])

@@ -4,7 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { formatRupiah } from "@/lib/utils";
 import {
   FiPlus, FiEdit2, FiTrash2, FiX, FiCheck,
-  FiToggleLeft, FiToggleRight,
+  FiToggleLeft, FiToggleRight, FiSearch,
 } from "react-icons/fi";
 import { MdOutlineRestaurant } from "react-icons/md";
 
@@ -18,13 +18,13 @@ interface MenuItem {
   description: string | null;
 }
 
-const CATEGORIES = [
-  { value: "MAKANAN", label: "Makanan" },
-  { value: "MINUMAN", label: "Minuman" },
-  { value: "SNACK", label: "Snack" },
-];
+interface CategoryOption {
+  id: number;
+  name: string;
+  slug: string;
+}
 
-const EMPTY_FORM = { name: "", price: "", image: "", available: true, category: "MAKANAN", description: "" };
+const EMPTY_FORM = { name: "", price: "", image: "", available: true, category: "", description: "" };
 
 export default function SellerMenuPage() {
   const [menus, setMenus] = useState<MenuItem[]>([]);
@@ -35,6 +35,8 @@ export default function SellerMenuPage() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
 
   const fetchMenus = () => {
     fetch("/api/seller/menu")
@@ -43,11 +45,18 @@ export default function SellerMenuPage() {
       .catch(() => setLoading(false));
   };
 
-  useEffect(() => { fetchMenus(); }, []);
+  const fetchCategories = () => {
+    fetch("/api/admin/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .catch(() => {});
+  };
+
+  useEffect(() => { fetchMenus(); fetchCategories(); }, []);
 
   const openAdd = () => {
     setEditTarget(null);
-    setForm(EMPTY_FORM);
+    setForm({ ...EMPTY_FORM, category: categories[0]?.slug || "" });
     setError("");
     setShowModal(true);
   };
@@ -109,6 +118,36 @@ export default function SellerMenuPage() {
         </button>
       </div>
 
+      {/* Search Bar */}
+      <div className="relative mb-6">
+        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Cari menu..."
+          className="w-full pl-11 pr-10 py-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all text-stone-800 placeholder:text-stone-400 text-sm"
+        />
+        {searchQuery && (
+          <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+            <FiX size={16} />
+          </button>
+        )}
+      </div>
+
+      {/* Active filter indicator */}
+      {searchQuery && (
+        <div className="flex items-center justify-between bg-stone-50 rounded-xl px-4 py-2.5 mb-6">
+          <span className="text-xs text-stone-500">
+            Menampilkan <span className="font-semibold text-stone-700">{menus.filter((m) => m.name.toLowerCase().includes(searchQuery.toLowerCase())).length}</span> menu
+            untuk &ldquo;<span className="font-semibold text-stone-700">{searchQuery}</span>&rdquo;
+          </span>
+          <button onClick={() => setSearchQuery("")} className="text-xs text-green-700 font-medium hover:underline">
+            Reset
+          </button>
+        </div>
+      )}
+
       {!loading && menus.length === 0 ? (
         <div className="text-center py-20 text-stone-400">
           <MdOutlineRestaurant size={56} className="mx-auto mb-4 text-stone-300" />
@@ -117,9 +156,15 @@ export default function SellerMenuPage() {
             Tambah menu pertama Anda
           </button>
         </div>
+      ) : !loading && menus.filter((m) => m.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && searchQuery ? (
+        <div className="text-center py-20 text-stone-400">
+          <MdOutlineRestaurant size={56} className="mx-auto mb-4 text-stone-300" />
+          <p className="text-lg mb-2">Menu tidak ditemukan</p>
+          <p className="text-sm">Coba kata kunci lain</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {menus.map((menu) => (
+          {menus.filter((m) => m.name.toLowerCase().includes(searchQuery.toLowerCase())).map((menu) => (
             <div key={menu.id} className={`bg-white rounded-2xl border overflow-hidden transition-all ${!menu.available ? "opacity-60 border-stone-200" : "border-stone-100 hover:shadow-md hover:-translate-y-0.5"}`}>
               <div className="h-40 bg-linear-to-br from-green-50 to-stone-100 flex items-center justify-center relative">
                 {menu.image ? (
@@ -201,7 +246,7 @@ export default function SellerMenuPage() {
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   className="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
                 >
-                  {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  {categories.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
                 </select>
               </div>
               <div>

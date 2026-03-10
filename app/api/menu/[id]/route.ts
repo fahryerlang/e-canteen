@@ -15,7 +15,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { name, price, image, available, canteenId } = body;
+    const { name, price, image, available, canteenId, category, description } = body;
 
     const menu = await prisma.menu.update({
       where: { id: parseInt(id) },
@@ -25,6 +25,8 @@ export async function PUT(
         ...(image !== undefined && { image }),
         ...(available !== undefined && { available }),
         ...(canteenId !== undefined && { canteenId: parseInt(canteenId) }),
+        ...(category !== undefined && { category }),
+        ...(description !== undefined && { description: description || null }),
       },
     });
 

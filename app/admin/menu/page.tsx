@@ -2,12 +2,18 @@
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { formatRupiah } from "@/lib/utils";
-import { FiPlus, FiEdit, FiTrash2, FiX, FiCheck, FiFileText, FiImage, FiUpload, FiFilter } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiX, FiCheck, FiFileText, FiImage, FiUpload, FiFilter, FiSearch } from "react-icons/fi";
 import { MdOutlineRestaurant, MdStorefront } from "react-icons/md";
 
 interface CanteenOption {
   id: number;
   name: string;
+}
+
+interface CategoryOption {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 interface MenuItem {
@@ -16,6 +22,8 @@ interface MenuItem {
   price: number;
   image: string | null;
   available: boolean;
+  category: string;
+  description: string | null;
   canteenId: number | null;
   canteen: { id: number; name: string } | null;
 }
@@ -23,18 +31,23 @@ interface MenuItem {
 export default function AdminMenuPage() {
   const [menus, setMenus] = useState<MenuItem[]>([]);
   const [canteens, setCanteens] = useState<CanteenOption[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [brokenImageIds, setBrokenImageIds] = useState<number[]>([]);
   const [previewImageError, setPreviewImageError] = useState(false);
   const [filterCanteenId, setFilterCanteenId] = useState<number | null>(null);
+  const [filterCategory, setFilterCategory] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     price: "",
     image: "",
     available: true,
     canteenId: "",
+    category: "MAKANAN",
+    description: "",
   });
   const [error, setError] = useState("");
 
@@ -56,13 +69,25 @@ export default function AdminMenuPage() {
       .catch(() => {});
   };
 
+  const fetchCategories = () => {
+    fetch("/api/admin/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .catch(() => {});
+  };
+
   useEffect(() => {
     fetchMenus();
     fetchCanteens();
+    fetchCategories();
   }, []);
 
+  const getCategoryLabel = (slug: string) => {
+    return categories.find((c) => c.slug === slug)?.name || slug;
+  };
+
   const resetForm = () => {
-    setFormData({ name: "", price: "", image: "", available: true, canteenId: "" });
+    setFormData({ name: "", price: "", image: "", available: true, canteenId: "", category: "MAKANAN", description: "" });
     setEditingId(null);
     setShowForm(false);
     setError("");
@@ -76,6 +101,8 @@ export default function AdminMenuPage() {
       image: menu.image || "",
       available: menu.available,
       canteenId: menu.canteenId?.toString() || "",
+      category: menu.category || "MAKANAN",
+      description: menu.description || "",
     });
     setEditingId(menu.id);
     setShowForm(true);
@@ -158,9 +185,15 @@ export default function AdminMenuPage() {
     }
   };
 
-  const filteredMenus = filterCanteenId
-    ? menus.filter((m) => m.canteenId === filterCanteenId)
-    : menus;
+  const filteredMenus = menus.filter((m) => {
+    if (filterCanteenId && m.canteenId !== filterCanteenId) return false;
+    if (filterCategory !== "ALL" && m.category !== filterCategory) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      if (!m.name.toLowerCase().includes(q) && !m.canteen?.name.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
 
   // Group menus by canteen
   const groupedMenus: { canteenName: string; canteenId: number | null; items: MenuItem[] }[] = [];
@@ -198,12 +231,29 @@ export default function AdminMenuPage() {
         </button>
       </div>
 
+      {/* Search Bar */}
+      <div className="relative">
+        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Cari menu atau kantin..."
+          className="w-full pl-11 pr-10 py-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all text-stone-800 placeholder:text-stone-400 text-sm"
+        />
+        {searchQuery && (
+          <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+            <FiX size={16} />
+          </button>
+        )}
+      </div>
+
       {/* Canteen Filter Tabs */}
       {canteens.length > 1 && (
         <div className="flex gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 text-xs text-stone-400 mr-1">
             <FiFilter size={13} />
-            Filter:
+            Kantin:
           </div>
           <button
             onClick={() => setFilterCanteenId(null)}
@@ -230,6 +280,34 @@ export default function AdminMenuPage() {
           ))}
         </div>
       )}
+
+      {/* Category Filter Tabs */}
+      <div className="flex gap-2 flex-wrap">
+        <button
+          onClick={() => setFilterCategory("ALL")}
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            filterCategory === "ALL"
+              ? "bg-stone-800 text-white shadow-sm"
+              : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
+          }`}
+        >
+          <MdOutlineRestaurant size={14} />
+          Semua
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat.slug}
+            onClick={() => setFilterCategory(cat.slug)}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              filterCategory === cat.slug
+                ? "bg-stone-800 text-white shadow-sm"
+                : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
+            }`}
+          >
+            {cat.name}
+          </button>
+        ))}
+      </div>
 
       {/* Form Modal */}
       {showForm && (
@@ -302,6 +380,28 @@ export default function AdminMenuPage() {
 
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                  Kategori <span className="text-red-500">*</span>
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.slug}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, category: cat.slug })}
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-colors border ${
+                        formData.category === cat.slug
+                          ? "bg-green-700 text-white border-green-700"
+                          : "bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100"
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1.5">
                   Harga <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -318,6 +418,19 @@ export default function AdminMenuPage() {
                     placeholder="15000"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                  Deskripsi
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none text-stone-800 bg-stone-50/50 placeholder:text-stone-300 resize-none text-sm"
+                  rows={2}
+                  placeholder="Deskripsi singkat menu (opsional)"
+                />
               </div>
 
               <div>
@@ -408,6 +521,20 @@ export default function AdminMenuPage() {
         </div>
       )}
 
+      {/* Active filter indicator */}
+      {(searchQuery || filterCategory !== "ALL") && (
+        <div className="flex items-center justify-between bg-stone-50 rounded-xl px-4 py-2.5">
+          <span className="text-xs text-stone-500">
+            Menampilkan <span className="font-semibold text-stone-700">{filteredMenus.length}</span> menu
+            {searchQuery && <> untuk &ldquo;<span className="font-semibold text-stone-700">{searchQuery}</span>&rdquo;</>}
+            {filterCategory !== "ALL" && <> di kategori <span className="font-semibold text-stone-700">{getCategoryLabel(filterCategory)}</span></>}
+          </span>
+          <button onClick={() => { setSearchQuery(""); setFilterCanteenId(null); setFilterCategory("ALL"); }} className="text-xs text-green-700 font-medium hover:underline">
+            Reset Filter
+          </button>
+        </div>
+      )}
+
       {/* Menu List */}
       {filteredMenus.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-stone-100">
@@ -415,12 +542,14 @@ export default function AdminMenuPage() {
             <FiFileText className="text-stone-300" size={32} />
           </div>
           <p className="text-lg font-medium text-stone-600">
-            {filterCanteenId ? "Tidak ada menu di kantin ini" : "Belum ada menu"}
+            {searchQuery ? "Menu tidak ditemukan" : filterCanteenId ? "Tidak ada menu di kantin ini" : "Belum ada menu"}
           </p>
           <p className="text-sm text-stone-400 mt-1">
-            {filterCanteenId
-              ? "Tambahkan menu untuk kantin ini"
-              : "Tambahkan menu pertama untuk mulai berjualan"}
+            {searchQuery
+              ? "Coba kata kunci lain"
+              : filterCanteenId
+                ? "Tambahkan menu untuk kantin ini"
+                : "Tambahkan menu pertama untuk mulai berjualan"}
           </p>
           <button
             onClick={() => {
@@ -491,6 +620,10 @@ export default function AdminMenuPage() {
                           {menu.canteen.name}
                         </div>
                       )}
+                      {/* Category badge */}
+                      <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-stone-600 text-[10px] font-semibold px-2 py-1 rounded-lg shadow-sm">
+                        {getCategoryLabel(menu.category)}
+                      </div>
                       {/* Hover overlay */}
                       <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
@@ -521,9 +654,12 @@ export default function AdminMenuPage() {
                           )}
                         </button>
                       </div>
-                      <p className="text-green-700 font-bold text-sm mb-3">
+                      <p className="text-green-700 font-bold text-sm mb-1">
                         {formatRupiah(menu.price)}
                       </p>
+                      <span className="inline-block text-[10px] font-medium bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full mb-3">
+                        {getCategoryLabel(menu.category)}
+                      </span>
 
                       <div className="flex items-center gap-2 pt-3 border-t border-stone-100">
                         <button

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FiClipboard, FiDollarSign, FiHome, FiList, FiLogOut, FiShoppingCart, FiX, FiUsers, FiCreditCard, FiBarChart2, FiMessageSquare, FiHeart, FiUser, FiSend, FiChevronDown } from "react-icons/fi";
+import { useEffect, useState, useCallback } from "react";
+import { FiClipboard, FiDollarSign, FiHome, FiList, FiLogOut, FiShoppingCart, FiX, FiUsers, FiCreditCard, FiBarChart2, FiMessageSquare, FiHeart, FiUser, FiSend, FiChevronDown, FiTag } from "react-icons/fi";
 import { MdOutlineRestaurant, MdStorefront } from "react-icons/md";
 
 interface UserData {
@@ -16,12 +16,14 @@ interface UserData {
 interface AdminSidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  cartCount?: number;
 }
 
-export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
+export default function AdminSidebar({ isOpen, onToggle, cartCount }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
+  const [badges, setBadges] = useState<Record<string, number>>({});
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -29,6 +31,25 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
       .then((data) => setUser(data))
       .catch(() => setUser(null));
   }, []);
+
+  const fetchBadges = useCallback(() => {
+    fetch("/api/notifications/badges")
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((data) => setBadges(data))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetchBadges();
+    const interval = setInterval(fetchBadges, 15000);
+    // Listen for badge refresh events from order updates
+    const handleBadgeRefresh = () => fetchBadges();
+    window.addEventListener("badge-refresh", handleBadgeRefresh);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("badge-refresh", handleBadgeRefresh);
+    };
+  }, [fetchBadges]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -52,13 +73,14 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
 
   const role = user?.role ?? (pathname.startsWith("/admin") ? "ADMIN" : pathname.startsWith("/seller") ? "SELLER" : "USER");
 
-  type NavLink = { href: string; label: string; icon: React.ReactNode; children?: { href: string; label: string }[]; key?: string };
+  type NavLink = { href: string; label: string; icon: React.ReactNode; badge?: number; children?: { href: string; label: string }[]; key?: string };
 
   const adminLinks: NavLink[] = [
     { href: "/admin/dashboard", label: "Dashboard", icon: <FiHome /> },
     { href: "/admin/canteens", label: "Kelola Kantin", icon: <MdStorefront /> },
     { href: "/admin/menu", label: "Kelola Menu", icon: <MdOutlineRestaurant /> },
-    { href: "/admin/orders", label: "Antrean Pesanan", icon: <FiClipboard /> },
+    { href: "/admin/categories", label: "Kelola Kategori", icon: <FiTag /> },
+    { href: "/admin/orders", label: "Antrean Pesanan", icon: <FiClipboard />, badge: badges["/admin/orders"] },
     {
       href: "#", label: "Kelola Pengguna", icon: <FiUsers />, key: "pengguna",
       children: [
@@ -67,15 +89,15 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
         { href: "/admin/buyers", label: "Pembeli" },
       ],
     },
-    { href: "/admin/topup", label: "Permintaan Top Up", icon: <FiCreditCard /> },
-    { href: "/admin/withdrawals", label: "Setoran Penjual", icon: <FiSend /> },
+    { href: "/admin/topup", label: "Permintaan Top Up", icon: <FiCreditCard />, badge: badges["/admin/topup"] },
+    { href: "/admin/withdrawals", label: "Setoran Penjual", icon: <FiSend />, badge: badges["/admin/withdrawals"] },
     { href: "/admin/reports", label: "Laporan", icon: <FiDollarSign /> },
   ];
 
   const sellerLinks: NavLink[] = [
     { href: "/seller/dashboard", label: "Dashboard", icon: <FiHome /> },
     { href: "/seller/menu", label: "Menu Saya", icon: <FiShoppingCart /> },
-    { href: "/seller/orders", label: "Pesanan Masuk", icon: <FiList /> },
+    { href: "/seller/orders", label: "Pesanan Masuk", icon: <FiList />, badge: badges["/seller/orders"] },
     { href: "/seller/reports", label: "Laporan", icon: <FiBarChart2 /> },
     { href: "/seller/withdrawals", label: "Setor Saldo", icon: <FiSend /> },
     { href: "/seller/reviews", label: "Ulasan", icon: <FiMessageSquare /> },
@@ -84,8 +106,8 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
   const userLinks: NavLink[] = [
     { href: "/user/menu", label: "Menu", icon: <FiHome /> },
     { href: "/user/canteens", label: "Kantin", icon: <MdStorefront /> },
-    { href: "/user/cart", label: "Keranjang", icon: <FiShoppingCart /> },
-    { href: "/user/orders", label: "Riwayat", icon: <FiList /> },
+    { href: "/user/cart", label: "Keranjang", icon: <FiShoppingCart />, badge: cartCount },
+    { href: "/user/orders", label: "Riwayat", icon: <FiList />, badge: badges["/user/orders"] },
     { href: "/user/favorites", label: "Favorit", icon: <FiHeart /> },
     { href: "/user/topup", label: "Top Up", icon: <FiDollarSign /> },
     { href: "/user/profile", label: "Profil", icon: <FiUser /> },
@@ -170,8 +192,18 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
                   : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
               }`}
             >
-              {link.icon}
-              {link.label}
+              <span className="relative">
+                {link.icon}
+                {!!link.badge && link.badge > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+                )}
+              </span>
+              <span className="flex-1">{link.label}</span>
+              {!!link.badge && link.badge > 0 && (
+                <span className="min-w-5 h-5 px-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {link.badge > 99 ? "99+" : link.badge}
+                </span>
+              )}
             </Link>
           )
         )}

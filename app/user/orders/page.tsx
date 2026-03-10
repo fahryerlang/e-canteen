@@ -153,14 +153,7 @@ export default function UserOrdersPage() {
               : "Pantau status pesanan kamu di sini"}
           </p>
         </div>
-        <button
-          onClick={() => fetchOrders(true)}
-          disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors disabled:opacity-50"
-        >
-          <FiRefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-          {refreshing ? "Memuat..." : "Refresh"}
-        </button>
+        {/* Refresh button removed for realtime UX */}
       </div>
 
       {/* Status Summary */}
