@@ -12,18 +12,39 @@ interface Report {
   menuBreakdown: { name: string; quantity: number; revenue: number }[];
 }
 
+interface Withdrawal {
+  id: number;
+  amount: number;
+  status: string;
+  createdAt: string;
+}
+
 export default function AdminDashboard() {
   const [report, setReport] = useState<Report | null>(null);
+  const [approvedBalance, setApprovedBalance] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/reports/daily")
+    const fetchReport = fetch("/api/reports/daily")
       .then((res) => res.json())
-      .then((data) => {
-        setReport(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      .then((data) => setReport(data));
+
+    const fetchWithdrawals = fetch("/api/admin/withdrawals?status=APPROVED")
+      .then((res) => res.json())
+      .then((data: Withdrawal[]) => {
+        if (Array.isArray(data)) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const todayTotal = data
+            .filter((w) => new Date(w.createdAt) >= today)
+            .reduce((sum, w) => sum + w.amount, 0);
+          setApprovedBalance(todayTotal);
+        }
+      });
+
+    Promise.allSettled([fetchReport, fetchWithdrawals]).finally(() =>
+      setLoading(false)
+    );
   }, []);
 
   const today = new Date().toLocaleDateString("id-ID", {
@@ -60,10 +81,11 @@ export default function AdminDashboard() {
               </div>
               <span className="text-xs font-medium text-green-600 bg-green-50 px-2.5 py-1 rounded-full">Hari ini</span>
             </div>
-            <p className="text-sm text-stone-400 mb-1">Pendapatan</p>
+            <p className="text-sm text-stone-400 mb-1">Saldo Masuk</p>
             <p className="text-2xl font-bold text-stone-900">
-              {formatRupiah(report?.totalRevenue || 0)}
+              {formatRupiah(approvedBalance)}
             </p>
+            <p className="text-xs text-stone-400 mt-1">Dari setoran diterima</p>
           </div>
         </div>
 

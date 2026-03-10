@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: ["react-icons", "lucide-react"],
+  },
 };
 
 export default nextConfig;
